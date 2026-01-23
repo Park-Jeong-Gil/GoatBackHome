@@ -1,0 +1,108 @@
+import Phaser from 'phaser'
+
+export default class PreloadScene extends Phaser.Scene {
+  constructor() {
+    super('PreloadScene')
+  }
+
+  preload() {
+    // 로딩 바 표시
+    const progressBar = this.add.graphics()
+    const progressBox = this.add.graphics()
+    progressBox.fillStyle(0x222222, 0.8)
+    progressBox.fillRect(240, 270, 320, 50)
+
+    const width = this.cameras.main.width
+    const height = this.cameras.main.height
+    const loadingText = this.add.text(width / 2, height / 2 - 50, 'Loading...', {
+      fontSize: '20px',
+      color: '#ffffff',
+    })
+    loadingText.setOrigin(0.5, 0.5)
+
+    // 로딩 진행률 표시
+    this.load.on('progress', (value: number) => {
+      progressBar.clear()
+      progressBar.fillStyle(0xffffff, 1)
+      progressBar.fillRect(250, 280, 300 * value, 30)
+    })
+
+    this.load.on('complete', () => {
+      progressBar.destroy()
+      progressBox.destroy()
+      loadingText.destroy()
+    })
+
+    // 임시 플레이스홀더 에셋 생성 (나중에 실제 에셋으로 교체)
+    this.createPlaceholderAssets()
+
+    // 실제 에셋 로드 (파일이 있을 때 주석 해제)
+    // this.load.image('goat_idle', '/assets/sprites/goat_idle.png')
+    // this.load.image('goat_jump', '/assets/sprites/goat_jump.png')
+    // this.load.image('goat_fall', '/assets/sprites/goat_fall.png')
+    // this.load.image('platform', '/assets/tiles/platform_normal.png')
+    // this.load.image('platform_ice', '/assets/tiles/platform_ice.png')
+    // this.load.image('platform_tilted', '/assets/tiles/platform_tilted.png')
+    // this.load.image('bird', '/assets/obstacles/bird.png')
+    // this.load.image('leopard', '/assets/obstacles/leopard.png')
+    // this.load.image('mountains', '/assets/backgrounds/mountains.png')
+    // this.load.image('trees', '/assets/backgrounds/trees.png')
+    // this.load.audio('jump', '/assets/sounds/jump.mp3')
+    // this.load.audio('land', '/assets/sounds/land.mp3')
+  }
+
+  create() {
+    this.scene.start('GameScene')
+  }
+
+  private createPlaceholderAssets() {
+    // 플레이어 플레이스홀더 (32x32 흰색 사각형)
+    const playerGraphics = this.make.graphics({ x: 0, y: 0 })
+    playerGraphics.fillStyle(0xffffff, 1)
+    playerGraphics.fillRect(0, 0, 32, 32)
+    playerGraphics.generateTexture('goat', 32, 32)
+    playerGraphics.destroy()
+
+    // 발판 플레이스홀더 (64x16 갈색 사각형)
+    const platformGraphics = this.make.graphics({ x: 0, y: 0 })
+    platformGraphics.fillStyle(0x8b4513, 1)
+    platformGraphics.fillRect(0, 0, 64, 16)
+    platformGraphics.generateTexture('platform', 64, 16)
+    platformGraphics.destroy()
+
+    // 얼음 발판 플레이스홀더 (64x16 하늘색 사각형)
+    const iceGraphics = this.make.graphics({ x: 0, y: 0 })
+    iceGraphics.fillStyle(0x87ceeb, 1)
+    iceGraphics.fillRect(0, 0, 64, 16)
+    iceGraphics.generateTexture('platform_ice', 64, 16)
+    iceGraphics.destroy()
+
+    // 기울어진 발판 플레이스홀더
+    const tiltedGraphics = this.make.graphics({ x: 0, y: 0 })
+    tiltedGraphics.fillStyle(0x654321, 1)
+    tiltedGraphics.fillRect(0, 0, 64, 16)
+    tiltedGraphics.generateTexture('platform_tilted', 64, 16)
+    tiltedGraphics.destroy()
+
+    // 새 플레이스홀더 (24x24 빨간 사각형)
+    const birdGraphics = this.make.graphics({ x: 0, y: 0 })
+    birdGraphics.fillStyle(0xff0000, 1)
+    birdGraphics.fillRect(0, 0, 24, 24)
+    birdGraphics.generateTexture('bird', 24, 24)
+    birdGraphics.destroy()
+
+    // 표범 플레이스홀더 (48x32 주황색 사각형)
+    const leopardGraphics = this.make.graphics({ x: 0, y: 0 })
+    leopardGraphics.fillStyle(0xffa500, 1)
+    leopardGraphics.fillRect(0, 0, 48, 32)
+    leopardGraphics.generateTexture('leopard', 48, 32)
+    leopardGraphics.destroy()
+
+    // 골인 발판 플레이스홀더 (금색)
+    const goalGraphics = this.make.graphics({ x: 0, y: 0 })
+    goalGraphics.fillStyle(0xffd700, 1)
+    goalGraphics.fillRect(0, 0, 300, 16)
+    goalGraphics.generateTexture('platform_goal', 300, 16)
+    goalGraphics.destroy()
+  }
+}
