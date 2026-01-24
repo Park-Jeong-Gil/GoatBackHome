@@ -1,12 +1,26 @@
 import Phaser from 'phaser'
 import { GAME_CONSTANTS, MAP_HEIGHT } from '../config'
 
+// 플레이어 상태 enum
+export enum PlayerState {
+  IDLE = 'idle',           // 가만히 있는 상태
+  CHARGING = 'charging',   // 점프를 준비하는 상태 (점프 키가 눌린 상태)
+  JUMPING = 'jumping',     // 위로 점프 중인 상태
+  FALLING = 'falling',     // 아래로 떨어지는 중인 상태
+  LANDED = 'landed',       // 지면에 착지한 상태 (짧은 시간 동안만 유지)
+}
+
 export class Player extends Phaser.Physics.Matter.Sprite {
   private jumpPower: number = 0
   private isCharging: boolean = false
   private maxPower: number = GAME_CONSTANTS.MAX_JUMP_POWER
   public isGrounded: boolean = false
   public isOnGoalPlatform: boolean = false
+
+  // 상태 관리
+  private _state: PlayerState = PlayerState.IDLE
+  private landedTimer: number = 0
+  private readonly LANDED_DURATION: number = 150 // 착지 상태 지속 시간 (ms)
 
   private cursors!: Phaser.Types.Input.Keyboard.CursorKeys
   private spaceKey!: Phaser.Input.Keyboard.Key
@@ -16,7 +30,7 @@ export class Player extends Phaser.Physics.Matter.Sprite {
 
     scene.add.existing(this)
 
-    // 물리 설정 (회전 허용 - 착지 시 정방향으로 복원)
+    // 물리 설정
     this.setFriction(GAME_CONSTANTS.PLAYER_FRICTION)
     this.setBounce(GAME_CONSTANTS.PLAYER_BOUNCE)
 
@@ -27,7 +41,9 @@ export class Player extends Phaser.Physics.Matter.Sprite {
       height: 28,
     })
 
-    // 회전 저항 설정 (너무 빨리 회전하지 않도록)
+    // 회전 완전 방지
+    this.setFixedRotation()
+
     this.setFrictionAir(0.01)
 
     // 입력 설정
@@ -76,19 +92,42 @@ export class Player extends Phaser.Physics.Matter.Sprite {
       this.scene.events.emit('powerChanged', this.jumpPower / this.maxPower)
     }
 
-    // 착지 상태 업데이트 (바닥 접촉 감지)
-    this.updateGroundedState()
+    // 상태 업데이트
+    this.updateState(delta)
   }
 
-  private updateGroundedState() {
-    // 속도가 매우 작고 아래쪽으로 움직이지 않으면 착지 상태로 판정
+  private updateState(delta: number) {
     const velocity = this.body?.velocity as Phaser.Math.Vector2
-    if (velocity) {
-      // 착지 판정은 충돌 이벤트에서 처리
-      // 여기서는 공중에 떠 있는지만 체크
-      if (Math.abs(velocity.y) > 0.5) {
-        // 움직이고 있으면 착지 아님 (단, 충돌 이벤트에서 오버라이드 가능)
+    const prevState = this._state
+
+    // LANDED 상태 타이머 처리
+    if (this._state === PlayerState.LANDED) {
+      this.landedTimer -= delta
+      if (this.landedTimer <= 0) {
+        this._state = PlayerState.IDLE
       }
+      return
+    }
+
+    // 상태 결정
+    if (this.isGrounded) {
+      if (this.isCharging) {
+        this._state = PlayerState.CHARGING
+      } else {
+        this._state = PlayerState.IDLE
+      }
+    } else if (velocity) {
+      if (velocity.y < -0.5) {
+        this._state = PlayerState.JUMPING
+      } else if (velocity.y > 0.5) {
+        this._state = PlayerState.FALLING
+      }
+      // velocity.y가 -0.5 ~ 0.5 사이면 이전 상태 유지
+    }
+
+    // 상태 변경 시 이벤트 발생
+    if (prevState !== this._state) {
+      this.scene.events.emit('playerStateChanged', this._state, prevState)
     }
   }
 
@@ -110,11 +149,7 @@ export class Player extends Phaser.Physics.Matter.Sprite {
 
     this.setVelocity(finalDirX, dirY)
     this.isGrounded = false
-
-    // 점프 방향에 따라 회전력 추가 (자연스러운 점프 모션)
-    if (direction !== 0) {
-      this.setAngularVelocity(direction * 0.1)
-    }
+    this._state = PlayerState.JUMPING
 
     // 점프 실행 이벤트
     this.scene.events.emit('jumpExecuted')
@@ -138,14 +173,21 @@ export class Player extends Phaser.Physics.Matter.Sprite {
     return this.isCharging
   }
 
+  // 현재 플레이어 상태 반환
+  getState(): PlayerState {
+    return this._state
+  }
+
   setGrounded(grounded: boolean, isGoal: boolean = false) {
+    const wasInAir = !this.isGrounded
     this.isGrounded = grounded
     this.isOnGoalPlatform = isGoal
 
-    // 착지 시 정방향으로 회전 복원
-    if (grounded) {
-      this.setAngle(0)
-      this.setAngularVelocity(0)
+    // 공중에서 착지했을 때 LANDED 상태로 전환
+    if (grounded && wasInAir) {
+      this._state = PlayerState.LANDED
+      this.landedTimer = this.LANDED_DURATION
+      this.scene.events.emit('playerStateChanged', PlayerState.LANDED, PlayerState.FALLING)
     }
   }
 
@@ -153,6 +195,7 @@ export class Player extends Phaser.Physics.Matter.Sprite {
   applyKnockback(directionX: number, force: number) {
     this.setVelocity(directionX * force, -force * 0.5)
     this.isGrounded = false
+    this._state = PlayerState.FALLING
   }
 
   // 힘 적용 (얼음 미끄러짐 등)
