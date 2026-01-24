@@ -2,7 +2,7 @@ import Phaser from 'phaser'
 import { Player } from '../entities/Player'
 import { mapData } from '../utils/mapGenerator'
 import { createPlatformBody, extractBodiesFromPlatform } from '../utils/platformFactory'
-import { GAME_WIDTH, MAP_HEIGHT, GAME_CONSTANTS } from '../config'
+import { GAME_WIDTH, MAP_HEIGHT, GAME_CONSTANTS, DEBUG_CONFIG } from '../config'
 import { PlatformData } from '@/types/game.d'
 
 export default class GameScene extends Phaser.Scene {
@@ -25,6 +25,14 @@ export default class GameScene extends Phaser.Scene {
   }[] = []
   // 씬 초기화 완료 플래그
   private isInitialized: boolean = false
+  // 현재 플레이어가 밟고 있는 얼음 발판
+  private currentIcePlatform: Phaser.Physics.Matter.Image | null = null
+  // 얼음에 착지할 때의 x 속도 (이 방향으로 미끄러짐)
+  private iceSlideVelocity: number = 0
+  // 도착 문 센서
+  private goalDoorSensor: MatterJS.BodyType | null = null
+  // 도착 문 시각적 표시
+  private goalDoorGraphics: Phaser.GameObjects.Graphics | null = null
 
   constructor() {
     super('GameScene')
@@ -45,8 +53,9 @@ export default class GameScene extends Phaser.Scene {
     // 맵 생성
     this.createMap()
 
-    // 플레이어 생성 (화면 중앙)
-    this.player = new Player(this, this.scale.width / 2, 4900)
+    // 플레이어 시작 위치 결정
+    const startPos = this.getPlayerStartPosition()
+    this.player = new Player(this, startPos.x, startPos.y)
 
     // 카메라 설정
     this.cameras.main.startFollow(this.player, false, 0, GAME_CONSTANTS.CAMERA_LERP_Y)
@@ -75,6 +84,13 @@ export default class GameScene extends Phaser.Scene {
   private cleanup() {
     this.isInitialized = false
     this.platformBodies = []
+    this.currentIcePlatform = null
+    this.iceSlideVelocity = 0
+    this.goalDoorSensor = null
+    if (this.goalDoorGraphics) {
+      this.goalDoorGraphics.destroy()
+      this.goalDoorGraphics = null
+    }
     this.scale.off('resize', this.handleResize, this)
     this.events.off('powerChanged', this.updatePowerGauge, this)
     this.events.off('jumpExecuted', this.hidePowerGauge, this)
@@ -86,6 +102,12 @@ export default class GameScene extends Phaser.Scene {
     // HUD 업데이트
     this.updateHUD()
 
+    // 얼음 위에서 미끄러짐 처리
+    this.handleIceSliding(delta)
+
+    // 도착 문 그래픽 위치 업데이트 (골 발판 추적)
+    this.updateGoalDoorGraphics()
+
     // 클리어 체크
     if (this.player.isOnGoalPlatform) {
       const elapsed = Math.floor((Date.now() - this.startTime) / 1000)
@@ -93,8 +115,76 @@ export default class GameScene extends Phaser.Scene {
     }
   }
 
+  private handleIceSliding(delta: number) {
+    if (!this.currentIcePlatform || !this.player.isGrounded) {
+      return
+    }
+
+    // 착지 시 저장된 속도 방향으로 미끄러짐
+    if (Math.abs(this.iceSlideVelocity) > 0.5) {
+      const slideDirection = Math.sign(this.iceSlideVelocity)
+      const slideForce = 0.0003 * delta  // 약한 지속 힘
+
+      this.player.applySlideForce(
+        new Phaser.Math.Vector2(slideDirection * slideForce, 0)
+      )
+
+      // 미끄러짐 속도 서서히 감소
+      this.iceSlideVelocity *= 0.995
+    }
+  }
+
+  private updateGoalDoorGraphics() {
+    if (!this.goalDoorGraphics || !this.goalPlatform) return
+
+    // 골 발판 위치에 맞춰 문 그래픽 업데이트
+    const doorX = this.goalPlatform.x - 30
+    const doorY = this.goalPlatform.y - 60
+
+    this.goalDoorGraphics.clear()
+
+    // 문 프레임 (갈색)
+    this.goalDoorGraphics.fillStyle(0x8b4513, 1)
+    this.goalDoorGraphics.fillRect(doorX - 5, doorY - 5, 70, 55)
+
+    // 문 내부 (밝은 노란색 - 빛나는 효과)
+    this.goalDoorGraphics.fillStyle(0xffd700, 1)
+    this.goalDoorGraphics.fillRect(doorX, doorY, 60, 45)
+
+    // 문 하이라이트
+    this.goalDoorGraphics.fillStyle(0xffec8b, 0.6)
+    this.goalDoorGraphics.fillRect(doorX + 5, doorY + 5, 50, 15)
+
+    // 문 손잡이
+    this.goalDoorGraphics.fillStyle(0xdaa520, 1)
+    this.goalDoorGraphics.fillCircle(doorX + 50, doorY + 25, 4)
+  }
+
+  /**
+   * 플레이어 시작 위치 계산 (디버그 모드 지원)
+   */
+  private getPlayerStartPosition(): { x: number; y: number } {
+    const startIndex = DEBUG_CONFIG.START_PLATFORM_INDEX
+
+    // 디버그 시작 위치가 설정된 경우
+    if (startIndex !== null && startIndex >= 0 && startIndex < mapData.length) {
+      const platform = mapData[startIndex]
+      return {
+        x: platform.x * this.scaleX,
+        y: platform.y - 50, // 발판 위에서 시작
+      }
+    }
+
+    // 기본: 0번 발판 (시작점) 위에서 시작
+    const startPlatform = mapData[0]
+    return {
+      x: startPlatform.x * this.scaleX,
+      y: startPlatform.y - 50,
+    }
+  }
+
   private createMap() {
-    mapData.forEach((platform: PlatformData) => {
+    mapData.forEach((platform: PlatformData, index: number) => {
       // x 좌표와 너비를 화면 비율에 맞게 조정
       const scaledPlatform: PlatformData = {
         ...platform,
@@ -102,8 +192,8 @@ export default class GameScene extends Phaser.Scene {
         width: platform.width ? platform.width * this.scaleX : undefined,
       }
 
-      // platformFactory를 사용하여 발판 생성
-      const platformObj = createPlatformBody(this, scaledPlatform)
+      // platformFactory를 사용하여 발판 생성 (index 전달하여 순서 표시)
+      const platformObj = createPlatformBody(this, scaledPlatform, index)
 
       // 생성된 발판에서 물리 바디 추출
       const bodies = extractBodiesFromPlatform(platformObj)
@@ -118,19 +208,55 @@ export default class GameScene extends Phaser.Scene {
         })
       })
 
-      // 골인 발판 표시
+      // 얼음 발판 표시
+      if (platform.texture === 'platform_ice') {
+        bodies.forEach((body) => {
+          body.setData('isIce', true)
+        })
+      }
+
+      // 골인 발판 표시 및 도착 문 생성
       if (platform.isGoal) {
         bodies.forEach((body) => {
           body.setData('isGoal', true)
         })
         if (bodies.length > 0) {
           this.goalPlatform = bodies[0]
+          // 도착 문(센서) 생성 - 발판 위에 문 형태로
+          this.createGoalDoor(scaledPlatform.x, scaledPlatform.y)
         }
       }
 
       // platforms 배열에 추가 (충돌 감지용)
       this.platforms.push(...bodies)
     })
+  }
+
+  private createGoalDoor(x: number, platformY: number) {
+    // 문 크기
+    const doorWidth = 60
+    const doorHeight = 45
+    const doorY = platformY - doorHeight / 2 - 8  // 발판 바로 위
+
+    // 문 센서 (충돌하지 않고 감지만 함)
+    this.goalDoorSensor = this.matter.add.rectangle(
+      x,
+      doorY,
+      doorWidth,
+      doorHeight,
+      {
+        isSensor: true,
+        isStatic: true,
+        label: 'goalDoor',
+      }
+    )
+
+    // 문 시각적 표시 (Graphics로 그림)
+    this.goalDoorGraphics = this.add.graphics()
+    this.goalDoorGraphics.setDepth(5)
+
+    // 초기 문 그리기
+    this.updateGoalDoorGraphics()
   }
 
   private createHUD() {
@@ -223,14 +349,31 @@ export default class GameScene extends Phaser.Scene {
           const playerBody = this.player.body as MatterJS.BodyType
           if (bodyA === playerBody || bodyB === playerBody) {
             const otherBody = bodyA === playerBody ? bodyB : bodyA
+
+            // 도착 문 센서 감지
+            if (otherBody === this.goalDoorSensor) {
+              this.player.isOnGoalPlatform = true
+              return
+            }
+
             const platform = this.platforms.find(
               (p) => (p.body as MatterJS.BodyType) === otherBody
             )
 
             if (platform) {
               collidingPlatforms.add(platform)
-              const isGoal = platform.getData('isGoal') === true
-              this.player.setGrounded(true, isGoal)
+
+              // 얼음 발판에 착지 - 착지 순간의 x 속도 저장
+              if (platform.getData('isIce') === true) {
+                this.currentIcePlatform = platform
+                const velocity = this.player.body?.velocity as Phaser.Math.Vector2
+                if (velocity) {
+                  this.iceSlideVelocity = velocity.x
+                }
+              }
+
+              // 골 판정은 문(door sensor)에서만 처리하므로 false 전달
+              this.player.setGrounded(true, false)
             }
           }
         })
@@ -241,7 +384,7 @@ export default class GameScene extends Phaser.Scene {
     this.matter.world.on(
       'collisionactive',
       (event: Phaser.Physics.Matter.Events.CollisionActiveEvent) => {
-        let isOnGoal = false
+        let isOnIce = false
 
         event.pairs.forEach((pair) => {
           const bodyA = pair.bodyA
@@ -250,22 +393,36 @@ export default class GameScene extends Phaser.Scene {
           const playerBody = this.player.body as MatterJS.BodyType
           if (bodyA === playerBody || bodyB === playerBody) {
             const otherBody = bodyA === playerBody ? bodyB : bodyA
+
+            // 도착 문 센서와 지속 충돌 - 오직 여기서만 골 처리
+            if (otherBody === this.goalDoorSensor) {
+              this.player.isOnGoalPlatform = true
+              return
+            }
+
             const platform = this.platforms.find(
               (p) => (p.body as MatterJS.BodyType) === otherBody
             )
 
             if (platform) {
               collidingPlatforms.add(platform)
-              if (platform.getData('isGoal') === true) {
-                isOnGoal = true
+              if (platform.getData('isIce') === true) {
+                isOnIce = true
+                this.currentIcePlatform = platform
               }
             }
           }
         })
 
-        // 충돌 중인 발판이 있으면 착지 상태 유지
+        // 얼음 위가 아니면 얼음 상태 해제
+        if (!isOnIce) {
+          this.currentIcePlatform = null
+          this.iceSlideVelocity = 0
+        }
+
+        // 충돌 중인 발판이 있으면 착지 상태 유지 (골 판정은 문 센서에서만)
         if (collidingPlatforms.size > 0) {
-          this.player.setGrounded(true, isOnGoal)
+          this.player.setGrounded(true, false)
         }
       }
     )
@@ -281,12 +438,25 @@ export default class GameScene extends Phaser.Scene {
           const playerBody = this.player.body as MatterJS.BodyType
           if (bodyA === playerBody || bodyB === playerBody) {
             const otherBody = bodyA === playerBody ? bodyB : bodyA
+
+            // 도착 문 센서에서 벗어남
+            if (otherBody === this.goalDoorSensor) {
+              this.player.isOnGoalPlatform = false
+              return
+            }
+
             const platform = this.platforms.find(
               (p) => (p.body as MatterJS.BodyType) === otherBody
             )
 
             if (platform) {
               collidingPlatforms.delete(platform)
+
+              // 얼음 발판에서 벗어남
+              if (platform.getData('isIce') === true) {
+                this.currentIcePlatform = null
+                this.iceSlideVelocity = 0
+              }
             }
           }
         })
@@ -294,6 +464,8 @@ export default class GameScene extends Phaser.Scene {
         // 충돌 중인 발판이 없으면 공중 상태
         if (collidingPlatforms.size === 0) {
           this.player.setGrounded(false, false)
+          this.currentIcePlatform = null
+          this.iceSlideVelocity = 0
         }
       }
     )

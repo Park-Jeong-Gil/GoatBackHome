@@ -6,7 +6,7 @@ import GameOverScene from "./scenes/GameOverScene";
 // 기준 해상도 (이 값 기준으로 모든 좌표 계산)
 export const GAME_WIDTH = 960;
 export const GAME_HEIGHT = 540; // 16:9 비율
-export const MAP_HEIGHT = 5000;
+export const MAP_HEIGHT = 5500;
 
 export const phaserConfig: Phaser.Types.Core.GameConfig = {
   type: Phaser.AUTO,
@@ -29,6 +29,14 @@ export const phaserConfig: Phaser.Types.Core.GameConfig = {
     width: "100%",
     height: "100%",
   },
+};
+
+// 디버그 설정 (개발 모드에서만 사용)
+export const DEBUG_CONFIG = {
+  // 시작 발판 번호 (null이면 0번 발판에서 시작)
+  // 발판 위에 표시된 숫자를 참고하여 설정
+  START_PLATFORM_INDEX: null as number | null,
+  // START_PLATFORM_INDEX: 31,
 };
 
 // 게임 상수 (테스트 후 조정 필요)

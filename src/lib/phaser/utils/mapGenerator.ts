@@ -1,106 +1,81 @@
 import { PlatformData, ObstacleData } from "@/types/game.d";
 
+// 발판 데이터 (y좌표 내림차순 정렬: 아래 → 위, 시작점 → 골인점)
 export const mapData: PlatformData[] = [
-  // ═══════════════════════════════════════════════════════════
-  // 시작 지점 (화면 전체 너비)
-  // ═══════════════════════════════════════════════════════════
-  { x: 480, y: 4992, texture: "platform", width: 960, shape: "flat" },
-
-  // ═══════════════════════════════════════════════════════════
-  // 초반부 (높이 4000-5000) - 쉬움, 넓은 발판
-  // ═══════════════════════════════════════════════════════════
-  { x: 280, y: 4850, texture: "platform", width: 180, shape: "flat" },
-  { x: 780, y: 4700, texture: "platform", width: 170, shape: "flat" },
-  { x: 170, y: 4550, texture: "platform", width: 160, shape: "slope_up" },
-  { x: 620, y: 4400, texture: "platform", width: 170, shape: "flat" },
-  { x: 340, y: 4250, texture: "platform", width: 160, shape: "flat" },
-  { x: 700, y: 4100, texture: "platform", width: 150, shape: "slope_down" },
-
-  // ═══════════════════════════════════════════════════════════
-  // 중반부 초입 (높이 3500-4000) - 보통
-  // ═══════════════════════════════════════════════════════════
-  { x: 220, y: 3950, texture: "platform", width: 140, shape: "flat" },
-  { x: 620, y: 3800, texture: "platform", width: 150, shape: "slope_up" },
-  { x: 280, y: 3650, texture: "platform", width: 140, shape: "flat" },
-  { x: 700, y: 3500, texture: "platform", width: 130, shape: "flat" },
-
-  // ═══════════════════════════════════════════════════════════
-  // 중반부 (높이 2500-3500) - 얼음 등장
-  // ═══════════════════════════════════════════════════════════
-  { x: 220, y: 3350, texture: "platform", width: 130, shape: "flat" },
-  {
-    x: 620,
-    y: 3200,
-    texture: "platform_ice",
-    width: 140,
-    shape: "flat",
-    friction: 10,
-  },
-  { x: 340, y: 3050, texture: "platform", width: 130, shape: "slope_down" },
-  { x: 700, y: 2900, texture: "platform", width: 120, shape: "flat" },
-  { x: 220, y: 2750, texture: "platform", width: 130, shape: "flat" },
-  {
-    x: 620,
-    y: 2600,
-    texture: "platform_ice",
-    width: 120,
-    shape: "flat",
-    friction: 10,
-  },
-
-  // ═══════════════════════════════════════════════════════════
-  // 후반부 (높이 1500-2500) - 어려움
-  // ═══════════════════════════════════════════════════════════
-  { x: 280, y: 2450, texture: "platform", width: 120, shape: "flat" },
-  { x: 700, y: 2300, texture: "platform", width: 120, shape: "slope_up" },
-  { x: 220, y: 2150, texture: "platform", width: 110, shape: "flat" },
-  {
-    x: 620,
-    y: 2000,
-    texture: "platform_ice",
-    width: 120,
-    shape: "flat",
-    friction: 10,
-  },
-  { x: 280, y: 1850, texture: "platform", width: 110, shape: "flat" },
-  { x: 700, y: 1700, texture: "platform", width: 100, shape: "slope_down" },
-  { x: 220, y: 1550, texture: "platform", width: 110, shape: "flat" },
-
-  // ═══════════════════════════════════════════════════════════
-  // 최종 구간 (높이 500-1500) - 극악
-  // ═══════════════════════════════════════════════════════════
-  { x: 620, y: 1400, texture: "platform", width: 100, shape: "flat" },
-  {
-    x: 220,
-    y: 1250,
-    texture: "platform_ice",
-    width: 100,
-    shape: "flat",
-    friction: 10,
-  },
-  { x: 700, y: 1100, texture: "platform", width: 90, shape: "flat" },
-  { x: 280, y: 950, texture: "platform", width: 100, shape: "slope_up" },
-  { x: 700, y: 800, texture: "platform", width: 85, shape: "flat" },
-  {
-    x: 220,
-    y: 650,
-    texture: "platform_ice",
-    width: 90,
-    shape: "flat",
-    friction: 10,
-  },
-  { x: 620, y: 500, texture: "platform", width: 100, shape: "flat" },
-  { x: 280, y: 350, texture: "platform", width: 110, shape: "flat" },
-  { x: 700, y: 200, texture: "platform", width: 120, shape: "slope_up" },
-
-  // ═══════════════════════════════════════════════════════════
-  // 골인 지점 (착지 시 클리어)
-  // ═══════════════════════════════════════════════════════════
+  // 0: 시작 지점
+  { x: 480, y: 5492, texture: "platform", width: 960, shape: "flat" },
+  // 1
+  { x: 300, y: 5350, texture: "platform", width: 120, shape: "flat" },
+  // 2
+  { x: 780, y: 5200, texture: "platform", width: 130, shape: "flat" },
+  // 3
+  { x: 100, y: 5050, texture: "platform", width: 160, shape: "slope_up" },
+  // 4
+  { x: 880, y: 4850, texture: "platform", width: 120, shape: "L_reverse" },
+  // 5
+  { x: 500, y: 4750, texture: "platform", width: 150, shape: "flat" },
+  // 6
+  { x: 220, y: 4450, texture: "platform", width: 140, shape: "flat" },
+  // 7
+  { x: 620, y: 4300, texture: "platform", width: 150, shape: "slope_up" },
+  // 8
+  { x: 880, y: 4200, texture: "platform", width: 110, shape: "T" },
+  // 9
+  { x: 280, y: 4150, texture: "platform", width: 140, shape: "flat" },
+  // 10
+  { x: 700, y: 4000, texture: "platform", width: 130, shape: "flat" },
+  // 11
+  { x: 80, y: 3850, texture: "platform", width: 130, shape: "flat" },
+  // 12
+  { x: 600, y: 3700, texture: "platform_ice", width: 140, shape: "flat" },
+  // 13
+  { x: 340, y: 3550, texture: "platform", width: 130, shape: "slope_down" },
+  // 14
+  { x: 880, y: 3300, texture: "platform_ice", width: 100, shape: "flat" },
+  // 15
+  { x: 200, y: 3250, texture: "platform", width: 130, shape: "flat" },
+  // 16
+  { x: 620, y: 3100, texture: "platform_ice", width: 120, shape: "flat" },
+  // 17
+  { x: 280, y: 2950, texture: "platform", width: 120, shape: "flat" },
+  // 18
+  { x: 700, y: 2800, texture: "platform", width: 120, shape: "slope_up" },
+  // 19
+  { x: 80, y: 2700, texture: "platform", width: 100, shape: "T" },
+  // 20
+  { x: 880, y: 2400, texture: "platform", width: 100, shape: "L_reverse" },
+  // 21
+  { x: 280, y: 2350, texture: "platform", width: 110, shape: "flat" },
+  // 22
+  { x: 700, y: 2200, texture: "platform", width: 100, shape: "slope_down" },
+  // 23
+  { x: 580, y: 1900, texture: "platform", width: 100, shape: "flat" },
+  // 24
+  { x: 80, y: 1800, texture: "platform", width: 90, shape: "slope_up" },
+  // 25
+  { x: 220, y: 1750, texture: "platform_ice", width: 100, shape: "flat" },
+  // 26
+  { x: 700, y: 1600, texture: "platform", width: 90, shape: "flat" },
+  // 27
+  { x: 280, y: 1450, texture: "platform", width: 100, shape: "slope_up" },
+  // 28
+  { x: 700, y: 1300, texture: "platform", width: 85, shape: "flat" },
+  // 29
+  { x: 880, y: 1200, texture: "platform", width: 90, shape: "slope_down" },
+  // 30
+  { x: 160, y: 1150, texture: "platform_ice", width: 90, shape: "flat" },
+  // 31
+  { x: 520, y: 1000, texture: "platform", width: 100, shape: "flat" },
+  // 32
+  { x: 280, y: 850, texture: "platform", width: 110, shape: "flat" },
+  // 33
+  { x: 700, y: 700, texture: "platform", width: 120, shape: "slope_up" },
+  // 34: 골인 지점
   {
     x: 480,
-    y: 50,
+    y: 600,
     texture: "platform",
-    width: 300,
+    width: 100,
     shape: "flat",
     isGoal: true,
   },

@@ -9,30 +9,74 @@ const SLOPE_FLAT_LENGTH = 25   // 경사 양 끝 평지 길이
 
 /**
  * 발판 모양에 따른 Compound Body 생성
+ * @param index 발판 순서 번호 (개발 모드에서 표시용)
  */
 export function createPlatformBody(
   scene: Phaser.Scene,
-  platform: PlatformData
+  platform: PlatformData,
+  index?: number
 ): Phaser.GameObjects.GameObject {
   const shape = platform.shape || 'flat'
   const width = platform.width || 64
-  const friction = platform.friction ?? GAME_CONSTANTS.PLATFORM_FRICTION.NORMAL
+  // 얼음 발판은 자동으로 낮은 마찰력 적용
+  const isIce = platform.texture === 'platform_ice'
+  const defaultFriction = isIce
+    ? GAME_CONSTANTS.PLATFORM_FRICTION.ICE
+    : GAME_CONSTANTS.PLATFORM_FRICTION.NORMAL
+  const friction = platform.friction ?? defaultFriction
+
+  let result: Phaser.GameObjects.GameObject
 
   switch (shape) {
     case 'L':
-      return createLShape(scene, platform, width, friction, false)
+      result = createLShape(scene, platform, width, friction, false)
+      break
     case 'L_reverse':
-      return createLShape(scene, platform, width, friction, true)
+      result = createLShape(scene, platform, width, friction, true)
+      break
     case 'T':
-      return createTShape(scene, platform, width, friction)
+      result = createTShape(scene, platform, width, friction)
+      break
     case 'slope_up':
-      return createSlopeShape(scene, platform, width, friction, true)
+      result = createSlopeShape(scene, platform, width, friction, true)
+      break
     case 'slope_down':
-      return createSlopeShape(scene, platform, width, friction, false)
+      result = createSlopeShape(scene, platform, width, friction, false)
+      break
     case 'flat':
     default:
-      return createFlatShape(scene, platform, width, friction)
+      result = createFlatShape(scene, platform, width, friction)
   }
+
+  // 개발 편의를 위한 순서 번호 표시
+  if (index !== undefined) {
+    createPlatformLabel(scene, platform.x, platform.y, index)
+  }
+
+  return result
+}
+
+/**
+ * 발판 위에 순서 번호 라벨 생성 (개발용)
+ */
+function createPlatformLabel(
+  scene: Phaser.Scene,
+  x: number,
+  y: number,
+  index: number
+): Phaser.GameObjects.Text {
+  const label = scene.add.text(x, y - 25, `${index}`, {
+    fontSize: '14px',
+    color: '#ffffff',
+    fontFamily: 'monospace',
+    stroke: '#000000',
+    strokeThickness: 3,
+    backgroundColor: '#333333aa',
+    padding: { x: 4, y: 2 },
+  })
+  label.setOrigin(0.5, 0.5)
+  label.setDepth(50)
+  return label
 }
 
 /**

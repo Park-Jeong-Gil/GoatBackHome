@@ -95,13 +95,20 @@ export class Player extends Phaser.Physics.Matter.Sprite {
   private jump() {
     if (!this.isGrounded) return
 
+    // 현재 x 속도 (미끄러지는 중이면 유지)
+    const currentVelocity = this.body?.velocity as Phaser.Math.Vector2
+    const currentVelX = currentVelocity?.x || 0
+
     // 점프 시점에 방향키 상태 확인
     const direction = this.getDirection()
     const power = this.jumpPower
-    const dirX = direction * GAME_CONSTANTS.HORIZONTAL_JUMP_RATIO * power
+    const inputDirX = direction * GAME_CONSTANTS.HORIZONTAL_JUMP_RATIO * power
     const dirY = -power
 
-    this.setVelocity(dirX, dirY)
+    // 기존 x 속도 + 방향키 입력 (미끄러지면서 점프 가능)
+    const finalDirX = currentVelX * 0.7 + inputDirX
+
+    this.setVelocity(finalDirX, dirY)
     this.isGrounded = false
 
     // 점프 방향에 따라 회전력 추가 (자연스러운 점프 모션)
@@ -146,5 +153,16 @@ export class Player extends Phaser.Physics.Matter.Sprite {
   applyKnockback(directionX: number, force: number) {
     this.setVelocity(directionX * force, -force * 0.5)
     this.isGrounded = false
+  }
+
+  // 힘 적용 (얼음 미끄러짐 등)
+  applySlideForce(force: Phaser.Math.Vector2) {
+    const body = this.body as MatterJS.BodyType
+    if (body) {
+      this.scene.matter.body.applyForce(body, body.position, {
+        x: force.x,
+        y: force.y,
+      })
+    }
   }
 }

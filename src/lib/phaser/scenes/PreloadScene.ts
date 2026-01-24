@@ -78,10 +78,17 @@ export default class PreloadScene extends Phaser.Scene {
     platformGraphics.generateTexture('platform', 64, 16)
     platformGraphics.destroy()
 
-    // 얼음 발판 플레이스홀더 (64x16 하늘색 사각형)
+    // 얼음 발판 플레이스홀더 (64x16 진한 파란색 + 반투명 효과)
     const iceGraphics = this.make.graphics({ x: 0, y: 0 })
-    iceGraphics.fillStyle(0x87ceeb, 1)
+    // 진한 파란색 배경
+    iceGraphics.fillStyle(0x2196f3, 1)
     iceGraphics.fillRect(0, 0, 64, 16)
+    // 반짝이는 하이라이트 추가
+    iceGraphics.fillStyle(0x64b5f6, 0.7)
+    iceGraphics.fillRect(2, 2, 60, 4)
+    iceGraphics.fillStyle(0xbbdefb, 0.5)
+    iceGraphics.fillRect(4, 4, 20, 2)
+    iceGraphics.fillRect(30, 4, 15, 2)
     iceGraphics.generateTexture('platform_ice', 64, 16)
     iceGraphics.destroy()
 
