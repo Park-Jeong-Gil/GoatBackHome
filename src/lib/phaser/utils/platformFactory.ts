@@ -1,11 +1,19 @@
 import Phaser from 'phaser'
 import { PlatformData, PlatformShape } from '@/types/game.d'
-import { GAME_CONSTANTS } from '../config'
+import { GAME_CONSTANTS, COLLISION_CATEGORIES, COLLISION_MASKS } from '../config'
 
 const PLATFORM_THICKNESS = 16  // 발판 두께
 const LIP_HEIGHT = 20          // 턱 높이 (낮게)
 const LIP_WIDTH = 16           // 턱 너비
 const SLOPE_FLAT_LENGTH = 25   // 경사 양 끝 평지 길이
+
+/**
+ * 발판에 충돌 카테고리 설정 (플레이어와만 충돌, 새는 통과)
+ */
+function applyPlatformCollision(platform: Phaser.Physics.Matter.Image) {
+  platform.setCollisionCategory(COLLISION_CATEGORIES.PLATFORM)
+  platform.setCollidesWith(COLLISION_MASKS.PLATFORM)
+}
 
 /**
  * 발판 모양에 따른 Compound Body 생성
@@ -104,6 +112,7 @@ function createFlatShape(
     p.setAngle(platform.angle)
   }
 
+  applyPlatformCollision(p)
   return p
 }
 
@@ -151,6 +160,9 @@ function createLShape(
     height: LIP_HEIGHT,
   })
   lip.setStatic(true)
+
+  applyPlatformCollision(floor)
+  applyPlatformCollision(lip)
 
   container.setData('floor', floor)
   container.setData('lip', lip)
@@ -218,6 +230,10 @@ function createTShape(
     height: LIP_HEIGHT,
   })
   rightLip.setStatic(true)
+
+  applyPlatformCollision(floor)
+  applyPlatformCollision(leftLip)
+  applyPlatformCollision(rightLip)
 
   container.setData('floor', floor)
   container.setData('leftLip', leftLip)
@@ -302,6 +318,10 @@ function createSlopeShape(
     height: PLATFORM_THICKNESS,
   })
   rightFlat.setStatic(true)
+
+  applyPlatformCollision(leftFlat)
+  applyPlatformCollision(slope)
+  applyPlatformCollision(rightFlat)
 
   container.setData('leftFlat', leftFlat)
   container.setData('slope', slope)

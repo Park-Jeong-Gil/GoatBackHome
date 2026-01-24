@@ -81,10 +81,50 @@ export const mapData: PlatformData[] = [
   },
 ];
 
-// 장애물 데이터 (Week 2에서 구현)
+// 장애물 데이터 - 새 (좌우로 날아다니며 플레이어를 방해)
 export const obstacleData: ObstacleData[] = [
-  // { type: 'bird', x: 400, y: 3500, pattern: 'horizontal', speed: 100, range: 200 },
-  // { type: 'leopard', x: 300, y: 2500, pattern: 'chase', speed: 150 },
+  // 중간 구간 새들
+  {
+    type: "bird",
+    x: 400,
+    y: 3500,
+    pattern: "horizontal",
+    speed: 10,
+    range: 180,
+  },
+  {
+    type: "bird",
+    x: 600,
+    y: 2900,
+    pattern: "horizontal",
+    speed: 5,
+    range: 200,
+  },
+  {
+    type: "bird",
+    x: 300,
+    y: 2300,
+    pattern: "horizontal",
+    speed: 8,
+    range: 160,
+  },
+  // 상단 구간 새들 (더 빠름)
+  {
+    type: "bird",
+    x: 500,
+    y: 1700,
+    pattern: "horizontal",
+    speed: 10,
+    range: 220,
+  },
+  {
+    type: "bird",
+    x: 400,
+    y: 1100,
+    pattern: "horizontal",
+    speed: 12,
+    range: 200,
+  },
 ];
 
 // 발판 생성 헬퍼 함수 (기존 호환용)

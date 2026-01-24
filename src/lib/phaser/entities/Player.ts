@@ -1,5 +1,5 @@
 import Phaser from 'phaser'
-import { GAME_CONSTANTS, MAP_HEIGHT } from '../config'
+import { GAME_CONSTANTS, MAP_HEIGHT, COLLISION_CATEGORIES, COLLISION_MASKS } from '../config'
 
 // 플레이어 상태 enum
 export enum PlayerState {
@@ -45,6 +45,10 @@ export class Player extends Phaser.Physics.Matter.Sprite {
     this.setFixedRotation()
 
     this.setFrictionAir(0.01)
+
+    // 충돌 카테고리 설정 - 발판과 새 모두와 충돌
+    this.setCollisionCategory(COLLISION_CATEGORIES.PLAYER)
+    this.setCollidesWith(COLLISION_MASKS.PLAYER)
 
     // 입력 설정
     this.setupInput()

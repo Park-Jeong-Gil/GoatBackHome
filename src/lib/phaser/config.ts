@@ -39,6 +39,20 @@ export const DEBUG_CONFIG = {
   // START_PLATFORM_INDEX: 31,
 };
 
+// 충돌 카테고리 (Matter.js collision filter)
+export const COLLISION_CATEGORIES = {
+  PLAYER: 0x0001,   // 플레이어
+  PLATFORM: 0x0002, // 발판
+  BIRD: 0x0004,     // 새 장애물
+}
+
+// 충돌 마스크 (어떤 카테고리와 충돌할지)
+export const COLLISION_MASKS = {
+  PLAYER: COLLISION_CATEGORIES.PLATFORM | COLLISION_CATEGORIES.BIRD, // 발판과 새 모두와 충돌
+  PLATFORM: COLLISION_CATEGORIES.PLAYER, // 플레이어와만 충돌
+  BIRD: COLLISION_CATEGORIES.PLAYER,     // 플레이어와만 충돌 (발판 통과)
+}
+
 // 게임 상수 (테스트 후 조정 필요)
 export const GAME_CONSTANTS = {
   // 플레이어 설정

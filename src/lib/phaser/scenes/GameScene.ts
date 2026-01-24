@@ -1,13 +1,15 @@
 import Phaser from 'phaser'
 import { Player } from '../entities/Player'
-import { mapData } from '../utils/mapGenerator'
+import { Bird } from '../entities/Bird'
+import { mapData, obstacleData } from '../utils/mapGenerator'
 import { createPlatformBody, extractBodiesFromPlatform } from '../utils/platformFactory'
-import { GAME_WIDTH, MAP_HEIGHT, GAME_CONSTANTS, DEBUG_CONFIG } from '../config'
+import { GAME_WIDTH, MAP_HEIGHT, GAME_CONSTANTS, DEBUG_CONFIG, COLLISION_CATEGORIES, COLLISION_MASKS } from '../config'
 import { PlatformData } from '@/types/game.d'
 
 export default class GameScene extends Phaser.Scene {
   private player!: Player
   private platforms: Phaser.Physics.Matter.Image[] = []
+  private birds: Bird[] = []
   private goalPlatform: Phaser.Physics.Matter.Image | null = null
   private startTime!: number
   private timerText!: Phaser.GameObjects.Text
@@ -47,11 +49,14 @@ export default class GameScene extends Phaser.Scene {
     // 배경색 설정
     this.cameras.main.setBackgroundColor('#87CEEB')
 
-    // 맵 경계 설정 (실제 화면 너비 사용)
-    this.matter.world.setBounds(0, 0, this.scale.width, MAP_HEIGHT)
+    // 좌우 벽 생성 (플레이어만 충돌, 새는 통과)
+    this.createWalls()
 
     // 맵 생성
     this.createMap()
+
+    // 새 장애물 생성
+    this.createBirds()
 
     // 플레이어 시작 위치 결정
     const startPos = this.getPlayerStartPosition()
@@ -87,6 +92,9 @@ export default class GameScene extends Phaser.Scene {
     this.currentIcePlatform = null
     this.iceSlideVelocity = 0
     this.goalDoorSensor = null
+    // 새 정리
+    this.birds.forEach((bird) => bird.destroy())
+    this.birds = []
     if (this.goalDoorGraphics) {
       this.goalDoorGraphics.destroy()
       this.goalDoorGraphics = null
@@ -98,6 +106,9 @@ export default class GameScene extends Phaser.Scene {
 
   update(time: number, delta: number) {
     this.player.update(delta)
+
+    // 새 장애물 업데이트
+    this.birds.forEach((bird) => bird.update())
 
     // HUD 업데이트
     this.updateHUD()
@@ -232,6 +243,66 @@ export default class GameScene extends Phaser.Scene {
     })
   }
 
+  private createWalls() {
+    const wallThickness = 50
+    const screenWidth = this.scale.width
+
+    // 왼쪽 벽
+    const leftWall = this.matter.add.rectangle(
+      -wallThickness / 2,
+      MAP_HEIGHT / 2,
+      wallThickness,
+      MAP_HEIGHT,
+      {
+        isStatic: true,
+        label: 'wall',
+        friction: 0,
+        frictionStatic: 0,
+        restitution: 0.5,
+      }
+    )
+    leftWall.collisionFilter = {
+      category: COLLISION_CATEGORIES.PLATFORM,
+      mask: COLLISION_MASKS.PLATFORM,
+      group: 0,
+    }
+
+    // 오른쪽 벽
+    const rightWall = this.matter.add.rectangle(
+      screenWidth + wallThickness / 2,
+      MAP_HEIGHT / 2,
+      wallThickness,
+      MAP_HEIGHT,
+      {
+        isStatic: true,
+        label: 'wall',
+        friction: 0,
+        frictionStatic: 0,
+        restitution: 0.5,
+      }
+    )
+    rightWall.collisionFilter = {
+      category: COLLISION_CATEGORIES.PLATFORM,
+      mask: COLLISION_MASKS.PLATFORM,
+      group: 0,
+    }
+  }
+
+  private createBirds() {
+    obstacleData.forEach((data) => {
+      if (data.type === 'bird') {
+        // x 좌표를 화면 비율에 맞게 조정
+        const scaledData = {
+          ...data,
+          x: data.x * this.scaleX,
+          range: data.range ? data.range * this.scaleX : undefined,
+        }
+        const bird = new Bird(this, scaledData)
+        this.birds.push(bird)
+      }
+    })
+  }
+
   private createGoalDoor(x: number, platformY: number) {
     // 문 크기
     const doorWidth = 60
@@ -353,6 +424,29 @@ export default class GameScene extends Phaser.Scene {
             // 도착 문 센서 감지
             if (otherBody === this.goalDoorSensor) {
               this.player.isOnGoalPlatform = true
+              return
+            }
+
+            // 새와 충돌 감지
+            if (otherBody.label === 'bird') {
+              const bird = this.birds.find(
+                (b) => (b.body as MatterJS.BodyType) === otherBody
+              )
+              if (bird) {
+                // 넉백 적용 (새가 날아가는 방향으로 밀림)
+                const knockbackDir = bird.getKnockbackDirection()
+                this.player.applyKnockback(knockbackDir, GAME_CONSTANTS.BIRD_KNOCKBACK)
+              }
+              return
+            }
+
+            // 벽과 충돌 시 튕겨내기
+            if (otherBody.label === 'wall') {
+              const velocity = this.player.body?.velocity as Phaser.Math.Vector2
+              if (velocity) {
+                // x 속도를 반전시켜 튕겨냄
+                this.player.setVelocityX(-velocity.x * 0.8)
+              }
               return
             }
 
