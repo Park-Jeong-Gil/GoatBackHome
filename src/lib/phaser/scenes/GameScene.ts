@@ -1,7 +1,8 @@
 import Phaser from 'phaser'
 import { Player } from '../entities/Player'
 import { Bird } from '../entities/Bird'
-import { mapData, obstacleData } from '../utils/mapGenerator'
+import { SnowLeopard, SnowLeopardState } from '../entities/SnowLeopard'
+import { mapData, obstacleData, snowLeopardData } from '../utils/mapGenerator'
 import { createPlatformBody, extractBodiesFromPlatform } from '../utils/platformFactory'
 import { GAME_WIDTH, MAP_HEIGHT, GAME_CONSTANTS, DEBUG_CONFIG, COLLISION_CATEGORIES, COLLISION_MASKS } from '../config'
 import { PlatformData } from '@/types/game.d'
@@ -10,6 +11,7 @@ export default class GameScene extends Phaser.Scene {
   private player!: Player
   private platforms: Phaser.Physics.Matter.Image[] = []
   private birds: Bird[] = []
+  private snowLeopards: SnowLeopard[] = []
   private goalPlatform: Phaser.Physics.Matter.Image | null = null
   private startTime!: number
   private timerText!: Phaser.GameObjects.Text
@@ -58,9 +60,17 @@ export default class GameScene extends Phaser.Scene {
     // 새 장애물 생성
     this.createBirds()
 
+    // 설표 장애물 생성
+    this.createSnowLeopards()
+
     // 플레이어 시작 위치 결정
     const startPos = this.getPlayerStartPosition()
     this.player = new Player(this, startPos.x, startPos.y)
+
+    // 설표에 플레이어 참조 설정
+    this.snowLeopards.forEach((leopard) => {
+      leopard.setPlayerRef(this.player)
+    })
 
     // 카메라 설정
     this.cameras.main.startFollow(this.player, false, 0, GAME_CONSTANTS.CAMERA_LERP_Y)
@@ -95,6 +105,9 @@ export default class GameScene extends Phaser.Scene {
     // 새 정리
     this.birds.forEach((bird) => bird.destroy())
     this.birds = []
+    // 설표 정리
+    this.snowLeopards.forEach((leopard) => leopard.destroy())
+    this.snowLeopards = []
     if (this.goalDoorGraphics) {
       this.goalDoorGraphics.destroy()
       this.goalDoorGraphics = null
@@ -109,6 +122,12 @@ export default class GameScene extends Phaser.Scene {
 
     // 새 장애물 업데이트
     this.birds.forEach((bird) => bird.update())
+
+    // 설표 장애물 업데이트
+    this.snowLeopards.forEach((leopard) => leopard.update())
+
+    // 설표 바닥 추락 체크 및 리스폰 체크
+    this.checkSnowLeopardFallAndRespawn()
 
     // HUD 업데이트
     this.updateHUD()
@@ -303,6 +322,42 @@ export default class GameScene extends Phaser.Scene {
     })
   }
 
+  private createSnowLeopards() {
+    snowLeopardData.forEach((data) => {
+      // x 좌표와 감지 범위를 화면 비율에 맞게 조정
+      const scaledData = {
+        ...data,
+        x: data.x * this.scaleX,
+        detectRange: data.detectRange ? data.detectRange * this.scaleX : undefined,
+      }
+      const leopard = new SnowLeopard(this, scaledData)
+      this.snowLeopards.push(leopard)
+    })
+  }
+
+  private checkSnowLeopardFallAndRespawn() {
+    const cameraY = this.cameras.main.scrollY
+    const cameraBottom = cameraY + this.cameras.main.height
+
+    this.snowLeopards.forEach((leopard) => {
+      // 설표가 살아있는 상태에서 카메라 아래로 벗어나면 사라짐
+      if (leopard.isAlive() && leopard.y > cameraBottom + 50) {
+        leopard.onFellOffMap()
+      }
+
+      // 설표가 죽은 상태이고, 카메라가 설표 스폰 위치에서 벗어났으면 리스폰
+      // (스폰 위치가 화면 위쪽으로 벗어났을 때)
+      if (leopard.isDead()) {
+        const spawnY = leopard.getSpawnY()
+        // 카메라 하단이 스폰 위치보다 아래에 있으면 (스폰 위치가 화면 위로 벗어남)
+        if (cameraY > spawnY + 200) {
+          leopard.respawn()
+          leopard.setPlayerRef(this.player)
+        }
+      }
+    })
+  }
+
   private createGoalDoor(x: number, platformY: number) {
     // 문 크기
     const doorWidth = 60
@@ -440,6 +495,17 @@ export default class GameScene extends Phaser.Scene {
               return
             }
 
+            // 설표와 충돌 감지 - 게임 오버
+            if (otherBody.label === 'leopard') {
+              const leopard = this.snowLeopards.find(
+                (l) => (l.body as MatterJS.BodyType) === otherBody
+              )
+              if (leopard && leopard.isAlive()) {
+                this.handleGameOver()
+              }
+              return
+            }
+
             // 벽과 충돌 시 튕겨내기
             if (otherBody.label === 'wall') {
               const velocity = this.player.body?.velocity as Phaser.Math.Vector2
@@ -470,6 +536,23 @@ export default class GameScene extends Phaser.Scene {
               this.player.setGrounded(true, false)
             }
           }
+
+          // 설표와 발판 충돌 감지 (발판에 착지하면 계속 추적)
+          this.snowLeopards.forEach((leopard) => {
+            const leopardBody = leopard.body as MatterJS.BodyType
+            if (bodyA === leopardBody || bodyB === leopardBody) {
+              const otherBody = bodyA === leopardBody ? bodyB : bodyA
+
+              // 발판과 충돌했고, 설표가 떨어지는 중이면 착지 처리
+              const platform = this.platforms.find(
+                (p) => (p.body as MatterJS.BodyType) === otherBody
+              )
+              if (platform && leopard.getState() === SnowLeopardState.FALLING) {
+                // 발판에 착지 - 계속 추적 상태로 전환
+                leopard.onLandedOnPlatform()
+              }
+            }
+          })
         })
       }
     )

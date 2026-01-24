@@ -1,4 +1,5 @@
 import { PlatformData, ObstacleData } from "@/types/game.d";
+import { SnowLeopardData } from "../entities/SnowLeopard";
 
 // 발판 데이터 (y좌표 내림차순 정렬: 아래 → 위, 시작점 → 골인점)
 export const mapData: PlatformData[] = [
@@ -124,6 +125,34 @@ export const obstacleData: ObstacleData[] = [
     pattern: "horizontal",
     speed: 12,
     range: 200,
+  },
+];
+
+// 설표 데이터 - 특정 발판 위에 배치
+export const snowLeopardData: SnowLeopardData[] = [
+  // 10번 발판 (x: 700, y: 4000)
+  {
+    platformIndex: 10,
+    x: 700,
+    y: 4000 - 30,
+    detectRange: 375, // 250 * 1.5
+    speed: 150,
+  },
+  // 17번 발판 (x: 280, y: 2950)
+  {
+    platformIndex: 17,
+    x: 280,
+    y: 2950 - 30,
+    detectRange: 420, // 280 * 1.5
+    speed: 170,
+  },
+  // 26번 발판 (x: 700, y: 1600)
+  {
+    platformIndex: 26,
+    x: 700,
+    y: 1600 - 30,
+    detectRange: 450, // 300 * 1.5
+    speed: 180,
   },
 ];
 
