@@ -1,5 +1,4 @@
 import Phaser from 'phaser'
-import { GAME_WIDTH, GAME_HEIGHT } from '../config'
 
 interface GameOverData {
   success: boolean
@@ -19,22 +18,26 @@ export default class GameOverScene extends Phaser.Scene {
   }
 
   create() {
+    const width = this.scale.width
+    const height = this.scale.height
+
     // 반투명 배경
     const overlay = this.add.rectangle(
-      GAME_WIDTH / 2,
-      GAME_HEIGHT / 2,
-      GAME_WIDTH,
-      GAME_HEIGHT,
+      width / 2,
+      height / 2,
+      width,
+      height,
       0x000000,
       0.7
     )
+    overlay.setScrollFactor(0)
 
     // 제목
     const titleText = this.gameResult.success ? 'GOAL REACHED!' : 'GAME OVER'
     const titleColor = this.gameResult.success ? '#FFD700' : '#FF4444'
 
     this.add
-      .text(GAME_WIDTH / 2, 150, titleText, {
+      .text(width / 2, height * 0.25, titleText, {
         fontSize: '48px',
         color: titleColor,
         fontFamily: 'monospace',
@@ -42,6 +45,7 @@ export default class GameOverScene extends Phaser.Scene {
         strokeThickness: 4,
       })
       .setOrigin(0.5)
+      .setScrollFactor(0)
 
     // 클리어 시간
     const minutes = Math.floor(this.gameResult.clearTime / 60)
@@ -50,31 +54,33 @@ export default class GameOverScene extends Phaser.Scene {
 
     if (this.gameResult.success) {
       this.add
-        .text(GAME_WIDTH / 2, 230, `Clear Time: ${timeStr}`, {
+        .text(width / 2, height * 0.4, `Clear Time: ${timeStr}`, {
           fontSize: '24px',
           color: '#ffffff',
           fontFamily: 'monospace',
         })
         .setOrigin(0.5)
+        .setScrollFactor(0)
     }
 
     // 최대 높이
     this.add
-      .text(GAME_WIDTH / 2, 270, `Best Height: ${this.gameResult.height}m`, {
+      .text(width / 2, height * 0.48, `Best Height: ${this.gameResult.height}m`, {
         fontSize: '24px',
         color: '#ffffff',
         fontFamily: 'monospace',
       })
       .setOrigin(0.5)
+      .setScrollFactor(0)
 
     // 버튼들
-    this.createButton(GAME_WIDTH / 2, 380, 'PLAY AGAIN', () => {
+    this.createButton(width / 2, height * 0.65, 'PLAY AGAIN', () => {
       this.scene.stop()
       this.scene.stop('GameScene')
       this.scene.start('GameScene')
     })
 
-    this.createButton(GAME_WIDTH / 2, 440, 'MAIN MENU', () => {
+    this.createButton(width / 2, height * 0.75, 'MAIN MENU', () => {
       this.scene.stop()
       this.scene.stop('GameScene')
       // Next.js 라우터로 메인 메뉴 이동
@@ -134,7 +140,7 @@ export default class GameOverScene extends Phaser.Scene {
         // 랭크 표시
         if (result.rank) {
           this.add
-            .text(GAME_WIDTH / 2, 320, `RANK #${result.rank}`, {
+            .text(this.scale.width / 2, this.scale.height * 0.55, `RANK #${result.rank}`, {
               fontSize: '32px',
               color: '#FFD700',
               fontFamily: 'monospace',
@@ -142,6 +148,7 @@ export default class GameOverScene extends Phaser.Scene {
               strokeThickness: 3,
             })
             .setOrigin(0.5)
+            .setScrollFactor(0)
         }
       }
     } catch (error) {

@@ -5,7 +5,6 @@ export class Player extends Phaser.Physics.Matter.Sprite {
   private jumpPower: number = 0
   private isCharging: boolean = false
   private maxPower: number = GAME_CONSTANTS.MAX_JUMP_POWER
-  private direction: number = 0 // -1: left, 0: up, 1: right
   public isGrounded: boolean = false
   public isOnGoalPlatform: boolean = false
 
@@ -17,8 +16,7 @@ export class Player extends Phaser.Physics.Matter.Sprite {
 
     scene.add.existing(this)
 
-    // 물리 설정
-    this.setFixedRotation()
+    // 물리 설정 (회전 허용 - 착지 시 정방향으로 복원)
     this.setFriction(GAME_CONSTANTS.PLAYER_FRICTION)
     this.setBounce(GAME_CONSTANTS.PLAYER_BOUNCE)
 
@@ -29,6 +27,9 @@ export class Player extends Phaser.Physics.Matter.Sprite {
       height: 28,
     })
 
+    // 회전 저항 설정 (너무 빨리 회전하지 않도록)
+    this.setFrictionAir(0.01)
+
     // 입력 설정
     this.setupInput()
   }
@@ -38,23 +39,6 @@ export class Player extends Phaser.Physics.Matter.Sprite {
 
     this.cursors = this.scene.input.keyboard.createCursorKeys()
     this.spaceKey = this.scene.input.keyboard.addKey('SPACE')
-
-    // 방향키
-    this.scene.input.keyboard.on('keydown-LEFT', () => {
-      this.direction = -1
-    })
-
-    this.scene.input.keyboard.on('keydown-RIGHT', () => {
-      this.direction = 1
-    })
-
-    this.scene.input.keyboard.on('keyup-LEFT', () => {
-      if (this.direction === -1) this.direction = 0
-    })
-
-    this.scene.input.keyboard.on('keyup-RIGHT', () => {
-      if (this.direction === 1) this.direction = 0
-    })
 
     // 점프 차징
     this.spaceKey.on('down', () => {
@@ -70,6 +54,14 @@ export class Player extends Phaser.Physics.Matter.Sprite {
         this.jumpPower = 0
       }
     })
+  }
+
+  // 현재 방향키 상태 확인
+  private getDirection(): number {
+    if (!this.cursors) return 0
+    if (this.cursors.left.isDown) return -1
+    if (this.cursors.right.isDown) return 1
+    return 0
   }
 
   update(delta: number) {
@@ -103,12 +95,19 @@ export class Player extends Phaser.Physics.Matter.Sprite {
   private jump() {
     if (!this.isGrounded) return
 
+    // 점프 시점에 방향키 상태 확인
+    const direction = this.getDirection()
     const power = this.jumpPower
-    const dirX = this.direction * GAME_CONSTANTS.HORIZONTAL_JUMP_RATIO * power
+    const dirX = direction * GAME_CONSTANTS.HORIZONTAL_JUMP_RATIO * power
     const dirY = -power
 
     this.setVelocity(dirX, dirY)
     this.isGrounded = false
+
+    // 점프 방향에 따라 회전력 추가 (자연스러운 점프 모션)
+    if (direction !== 0) {
+      this.setAngularVelocity(direction * 0.1)
+    }
 
     // 점프 실행 이벤트
     this.scene.events.emit('jumpExecuted')
@@ -135,6 +134,12 @@ export class Player extends Phaser.Physics.Matter.Sprite {
   setGrounded(grounded: boolean, isGoal: boolean = false) {
     this.isGrounded = grounded
     this.isOnGoalPlatform = isGoal
+
+    // 착지 시 정방향으로 회전 복원
+    if (grounded) {
+      this.setAngle(0)
+      this.setAngularVelocity(0)
+    }
   }
 
   // 넉백 (새에게 맞았을 때)

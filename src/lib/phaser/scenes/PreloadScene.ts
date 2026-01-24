@@ -9,11 +9,19 @@ export default class PreloadScene extends Phaser.Scene {
     // 로딩 바 표시
     const progressBar = this.add.graphics()
     const progressBox = this.add.graphics()
-    progressBox.fillStyle(0x222222, 0.8)
-    progressBox.fillRect(240, 270, 320, 50)
 
     const width = this.cameras.main.width
     const height = this.cameras.main.height
+
+    // 동적 위치 계산
+    const barWidth = 320
+    const barHeight = 50
+    const barX = (width - barWidth) / 2
+    const barY = (height - barHeight) / 2
+
+    progressBox.fillStyle(0x222222, 0.8)
+    progressBox.fillRect(barX, barY, barWidth, barHeight)
+
     const loadingText = this.add.text(width / 2, height / 2 - 50, 'Loading...', {
       fontSize: '20px',
       color: '#ffffff',
@@ -24,7 +32,7 @@ export default class PreloadScene extends Phaser.Scene {
     this.load.on('progress', (value: number) => {
       progressBar.clear()
       progressBar.fillStyle(0xffffff, 1)
-      progressBar.fillRect(250, 280, 300 * value, 30)
+      progressBar.fillRect(barX + 10, barY + 10, (barWidth - 20) * value, barHeight - 20)
     })
 
     this.load.on('complete', () => {

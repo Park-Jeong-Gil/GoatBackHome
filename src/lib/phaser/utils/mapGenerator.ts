@@ -1,60 +1,124 @@
-import { PlatformData, ObstacleData } from '@/types/game.d'
+import { PlatformData, ObstacleData } from "@/types/game.d";
 
 export const mapData: PlatformData[] = [
-  // 시작 지점
-  { x: 400, y: 4950, texture: 'platform', width: 200 },
+  // ═══════════════════════════════════════════════════════════
+  // 시작 지점 (화면 전체 너비)
+  // ═══════════════════════════════════════════════════════════
+  { x: 480, y: 4992, texture: "platform", width: 960, shape: "flat" },
 
-  // 초반부 (높이 4000-5000) - 쉬움
-  { x: 300, y: 4800, texture: 'platform' },
-  { x: 500, y: 4600, texture: 'platform' },
-  { x: 250, y: 4400, texture: 'platform' },
-  { x: 550, y: 4200, texture: 'platform' },
-  { x: 350, y: 4000, texture: 'platform' },
+  // ═══════════════════════════════════════════════════════════
+  // 초반부 (높이 4000-5000) - 쉬움, 넓은 발판
+  // ═══════════════════════════════════════════════════════════
+  { x: 280, y: 4850, texture: "platform", width: 180, shape: "flat" },
+  { x: 780, y: 4700, texture: "platform", width: 170, shape: "flat" },
+  { x: 170, y: 4550, texture: "platform", width: 160, shape: "slope_up" },
+  { x: 620, y: 4400, texture: "platform", width: 170, shape: "flat" },
+  { x: 340, y: 4250, texture: "platform", width: 160, shape: "flat" },
+  { x: 700, y: 4100, texture: "platform", width: 150, shape: "slope_down" },
 
-  // 중반부 (높이 2000-4000) - 좁은 발판
-  { x: 200, y: 3800, texture: 'platform', width: 128 },
-  { x: 600, y: 3600, texture: 'platform', width: 128 },
-  { x: 300, y: 3400, texture: 'platform_ice', friction: 0.001 },
-  { x: 500, y: 3200, texture: 'platform', width: 128 },
+  // ═══════════════════════════════════════════════════════════
+  // 중반부 초입 (높이 3500-4000) - 보통
+  // ═══════════════════════════════════════════════════════════
+  { x: 220, y: 3950, texture: "platform", width: 140, shape: "flat" },
+  { x: 620, y: 3800, texture: "platform", width: 150, shape: "slope_up" },
+  { x: 280, y: 3650, texture: "platform", width: 140, shape: "flat" },
+  { x: 700, y: 3500, texture: "platform", width: 130, shape: "flat" },
 
-  // 중반부 - 기울어진 발판 등장
-  { x: 400, y: 3000, texture: 'platform_tilted', angle: 15 },
-  { x: 250, y: 2800, texture: 'platform', width: 128 },
-  { x: 550, y: 2600, texture: 'platform_tilted', angle: -20 },
+  // ═══════════════════════════════════════════════════════════
+  // 중반부 (높이 2500-3500) - 얼음 등장
+  // ═══════════════════════════════════════════════════════════
+  { x: 220, y: 3350, texture: "platform", width: 130, shape: "flat" },
+  {
+    x: 620,
+    y: 3200,
+    texture: "platform_ice",
+    width: 140,
+    shape: "flat",
+    friction: 10,
+  },
+  { x: 340, y: 3050, texture: "platform", width: 130, shape: "slope_down" },
+  { x: 700, y: 2900, texture: "platform", width: 120, shape: "flat" },
+  { x: 220, y: 2750, texture: "platform", width: 130, shape: "flat" },
+  {
+    x: 620,
+    y: 2600,
+    texture: "platform_ice",
+    width: 120,
+    shape: "flat",
+    friction: 10,
+  },
 
-  // 후반부 (높이 1000-2000) - 어려움
-  { x: 350, y: 2400, texture: 'platform', width: 96 },
-  { x: 450, y: 2200, texture: 'platform_ice', width: 96, friction: 0.001 },
-  { x: 200, y: 2000, texture: 'platform_tilted', angle: 30, width: 128 },
+  // ═══════════════════════════════════════════════════════════
+  // 후반부 (높이 1500-2500) - 어려움
+  // ═══════════════════════════════════════════════════════════
+  { x: 280, y: 2450, texture: "platform", width: 120, shape: "flat" },
+  { x: 700, y: 2300, texture: "platform", width: 120, shape: "slope_up" },
+  { x: 220, y: 2150, texture: "platform", width: 110, shape: "flat" },
+  {
+    x: 620,
+    y: 2000,
+    texture: "platform_ice",
+    width: 120,
+    shape: "flat",
+    friction: 10,
+  },
+  { x: 280, y: 1850, texture: "platform", width: 110, shape: "flat" },
+  { x: 700, y: 1700, texture: "platform", width: 100, shape: "slope_down" },
+  { x: 220, y: 1550, texture: "platform", width: 110, shape: "flat" },
 
-  // 최종 구간 (높이 0-1000) - 극악
-  { x: 600, y: 1800, texture: 'platform', width: 64 },
-  { x: 200, y: 1600, texture: 'platform', width: 64 },
-  { x: 500, y: 1400, texture: 'platform_ice', width: 96 },
-  { x: 300, y: 1200, texture: 'platform_tilted', angle: 45 },
-  { x: 450, y: 1000, texture: 'platform', width: 64 },
-  { x: 250, y: 800, texture: 'platform', width: 64 },
-  { x: 550, y: 600, texture: 'platform', width: 96 },
-  { x: 350, y: 400, texture: 'platform', width: 96 },
-  { x: 450, y: 200, texture: 'platform', width: 128 },
+  // ═══════════════════════════════════════════════════════════
+  // 최종 구간 (높이 500-1500) - 극악
+  // ═══════════════════════════════════════════════════════════
+  { x: 620, y: 1400, texture: "platform", width: 100, shape: "flat" },
+  {
+    x: 220,
+    y: 1250,
+    texture: "platform_ice",
+    width: 100,
+    shape: "flat",
+    friction: 10,
+  },
+  { x: 700, y: 1100, texture: "platform", width: 90, shape: "flat" },
+  { x: 280, y: 950, texture: "platform", width: 100, shape: "slope_up" },
+  { x: 700, y: 800, texture: "platform", width: 85, shape: "flat" },
+  {
+    x: 220,
+    y: 650,
+    texture: "platform_ice",
+    width: 90,
+    shape: "flat",
+    friction: 10,
+  },
+  { x: 620, y: 500, texture: "platform", width: 100, shape: "flat" },
+  { x: 280, y: 350, texture: "platform", width: 110, shape: "flat" },
+  { x: 700, y: 200, texture: "platform", width: 120, shape: "slope_up" },
 
+  // ═══════════════════════════════════════════════════════════
   // 골인 지점 (착지 시 클리어)
-  { x: 400, y: 50, texture: 'platform', width: 300, isGoal: true },
-]
+  // ═══════════════════════════════════════════════════════════
+  {
+    x: 480,
+    y: 50,
+    texture: "platform",
+    width: 300,
+    shape: "flat",
+    isGoal: true,
+  },
+];
 
 // 장애물 데이터 (Week 2에서 구현)
 export const obstacleData: ObstacleData[] = [
   // { type: 'bird', x: 400, y: 3500, pattern: 'horizontal', speed: 100, range: 200 },
   // { type: 'leopard', x: 300, y: 2500, pattern: 'chase', speed: 150 },
-]
+];
 
-// 발판 생성 헬퍼 함수
+// 발판 생성 헬퍼 함수 (기존 호환용)
 export function getTextureForPlatform(platform: PlatformData): string {
-  if (platform.isGoal) return 'platform_goal'
-  return platform.texture
+  if (platform.isGoal) return "platform_goal";
+  return platform.texture;
 }
 
-// 발판 너비 계산
+// 발판 너비 계산 (기존 호환용)
 export function getPlatformWidth(platform: PlatformData): number {
-  return platform.width || 64
+  return platform.width || 64;
 }
