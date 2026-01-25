@@ -45,7 +45,7 @@ export const DEBUG_CONFIG = {
   // 시작 발판 번호 (null이면 0번 발판에서 시작)
   // 발판 위에 표시된 숫자를 참고하여 설정
   START_PLATFORM_INDEX: null as number | null,
-  // START_PLATFORM_INDEX: 33,
+  // START_PLATFORM_INDEX: 29,
 
   // 설표 리스폰 비활성화 (true면 한번 사라진 설표가 다시 나타나지 않음)
   DISABLE_LEOPARD_RESPAWN: true,

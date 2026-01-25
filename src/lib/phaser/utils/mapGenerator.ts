@@ -171,7 +171,7 @@ export const mobileMapData: PlatformData[] = [
   // 1
   { x: 350, y: 5350, texture: "platform", width: 140, shape: "flat" },
   // 2
-  { x: 620, y: 5220, texture: "platform", width: 150, shape: "flat" },
+  { x: 720, y: 5220, texture: "platform", width: 150, shape: "flat" },
   // 3
   { x: 200, y: 5080, texture: "platform", width: 160, shape: "flat" },
   // 4
@@ -179,33 +179,33 @@ export const mobileMapData: PlatformData[] = [
   // 5
   { x: 750, y: 4820, texture: "platform", width: 150, shape: "flat" },
   // 6
-  { x: 400, y: 4680, texture: "platform", width: 160, shape: "slope_up" },
+  { x: 400, y: 4680, texture: "platform", width: 160, shape: "flat" },
   // 7
   { x: 180, y: 4550, texture: "platform", width: 140, shape: "flat" },
   // 8
-  { x: 600, y: 4420, texture: "platform", width: 150, shape: "flat" },
+  { x: 680, y: 4420, texture: "platform", width: 150, shape: "flat" },
   // 9
-  { x: 350, y: 4280, texture: "platform", width: 160, shape: "flat" },
+  { x: 400, y: 4280, texture: "platform", width: 160, shape: "flat" },
   // 10
   { x: 700, y: 4150, texture: "platform", width: 140, shape: "flat" },
   // 11
-  { x: 250, y: 4020, texture: "platform_ice", width: 150, shape: "flat" },
+  { x: 250, y: 4020, texture: "platform", width: 150, shape: "flat" },
   // 12
-  { x: 550, y: 3880, texture: "platform", width: 160, shape: "flat" },
+  { x: 500, y: 3880, texture: "platform", width: 160, shape: "flat" },
   // 13
-  { x: 780, y: 3750, texture: "platform", width: 140, shape: "slope_down" },
+  { x: 780, y: 3750, texture: "platform", width: 140, shape: "flat" },
   // 14
   { x: 400, y: 3620, texture: "platform", width: 150, shape: "flat" },
   // 15
   { x: 150, y: 3490, texture: "platform", width: 160, shape: "flat" },
   // 16
-  { x: 500, y: 3360, texture: "platform_ice", width: 140, shape: "flat" },
+  { x: 500, y: 3360, texture: "platform", width: 140, shape: "flat" },
   // 17
   { x: 750, y: 3220, texture: "platform", width: 150, shape: "flat" },
   // 18
   { x: 300, y: 3090, texture: "platform", width: 160, shape: "flat" },
   // 19
-  { x: 600, y: 2960, texture: "platform", width: 140, shape: "slope_up" },
+  { x: 600, y: 2960, texture: "platform", width: 140, shape: "flat" },
   // 20
   { x: 200, y: 2830, texture: "platform", width: 150, shape: "flat" },
   // 21
@@ -213,11 +213,11 @@ export const mobileMapData: PlatformData[] = [
   // 22
   { x: 700, y: 2560, texture: "platform", width: 140, shape: "flat" },
   // 23
-  { x: 350, y: 2430, texture: "platform_ice", width: 150, shape: "flat" },
+  { x: 350, y: 2430, texture: "platform", width: 150, shape: "flat" },
   // 24
   { x: 580, y: 2300, texture: "platform", width: 160, shape: "flat" },
   // 25
-  { x: 180, y: 2170, texture: "platform", width: 140, shape: "slope_down" },
+  { x: 180, y: 2170, texture: "platform", width: 140, shape: "flat" },
   // 26
   { x: 450, y: 2040, texture: "platform", width: 150, shape: "flat" },
   // 27
@@ -227,11 +227,11 @@ export const mobileMapData: PlatformData[] = [
   // 29
   { x: 550, y: 1650, texture: "platform", width: 150, shape: "flat" },
   // 30
-  { x: 200, y: 1520, texture: "platform_ice", width: 160, shape: "flat" },
+  { x: 200, y: 1520, texture: "platform", width: 160, shape: "flat" },
   // 31
   { x: 520, y: 1390, texture: "platform", width: 140, shape: "flat" },
   // 32
-  { x: 730, y: 1260, texture: "platform", width: 150, shape: "slope_up" },
+  { x: 730, y: 1260, texture: "platform", width: 150, shape: "flat" },
   // 33
   { x: 350, y: 1130, texture: "platform", width: 160, shape: "flat" },
   // 34
