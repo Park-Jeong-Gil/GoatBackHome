@@ -8,6 +8,9 @@ export const GAME_WIDTH = 960;
 export const GAME_HEIGHT = 540; // 16:9 비율
 export const MAP_HEIGHT = 5500;
 
+// 모바일 감지 기준 (이 너비 이하면 모바일 모드)
+export const MOBILE_BREAKPOINT = 960;
+
 export const phaserConfig: Phaser.Types.Core.GameConfig = {
   type: Phaser.AUTO,
   width: GAME_WIDTH,

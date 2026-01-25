@@ -56,10 +56,10 @@ export function createPlatformBody(
       result = createFlatShape(scene, platform, width, friction)
   }
 
-  // 개발 편의를 위한 순서 번호 표시
-  if (index !== undefined) {
-    createPlatformLabel(scene, platform.x, platform.y, index)
-  }
+  // 개발 편의를 위한 순서 번호 표시 (일시 비활성화)
+  // if (index !== undefined) {
+  //   createPlatformLabel(scene, platform.x, platform.y, index)
+  // }
 
   return result
 }

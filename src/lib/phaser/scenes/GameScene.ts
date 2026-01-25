@@ -3,9 +3,9 @@ import { Player } from '../entities/Player'
 import { Bird } from '../entities/Bird'
 import { SnowLeopard, SnowLeopardState } from '../entities/SnowLeopard'
 import { VirtualController } from '../ui/VirtualController'
-import { mapData, obstacleData, snowLeopardData } from '../utils/mapGenerator'
+import { getMapDataForScreen, getObstacleDataForScreen, getSnowLeopardDataForScreen } from '../utils/mapGenerator'
 import { createPlatformBody, extractBodiesFromPlatform } from '../utils/platformFactory'
-import { GAME_WIDTH, MAP_HEIGHT, GAME_CONSTANTS, DEBUG_CONFIG, COLLISION_CATEGORIES, COLLISION_MASKS } from '../config'
+import { GAME_WIDTH, MAP_HEIGHT, GAME_CONSTANTS, DEBUG_CONFIG, COLLISION_CATEGORIES, COLLISION_MASKS, MOBILE_BREAKPOINT } from '../config'
 import { PlatformData } from '@/types/game.d'
 
 export default class GameScene extends Phaser.Scene {
@@ -40,6 +40,8 @@ export default class GameScene extends Phaser.Scene {
   private goalDoorGraphics: Phaser.GameObjects.Graphics | null = null
   // 가상 컨트롤러 (모바일용)
   private virtualController: VirtualController | null = null
+  // 모바일 모드 여부 (960px 이하)
+  private isMobile: boolean = false
 
   constructor() {
     super('GameScene')
@@ -50,6 +52,9 @@ export default class GameScene extends Phaser.Scene {
 
     // 스케일 팩터 계산 (기준 너비 960 대비)
     this.scaleX = this.scale.width / GAME_WIDTH
+
+    // 모바일 모드 감지 (960px 이하)
+    this.isMobile = this.scale.width <= MOBILE_BREAKPOINT
 
     // 배경색 설정
     this.cameras.main.setBackgroundColor('#87CEEB')
@@ -207,11 +212,12 @@ export default class GameScene extends Phaser.Scene {
    * 플레이어 시작 위치 계산 (디버그 모드 지원)
    */
   private getPlayerStartPosition(): { x: number; y: number } {
+    const currentMapData = getMapDataForScreen(this.isMobile)
     const startIndex = DEBUG_CONFIG.START_PLATFORM_INDEX
 
     // 디버그 시작 위치가 설정된 경우
-    if (startIndex !== null && startIndex >= 0 && startIndex < mapData.length) {
-      const platform = mapData[startIndex]
+    if (startIndex !== null && startIndex >= 0 && startIndex < currentMapData.length) {
+      const platform = currentMapData[startIndex]
       return {
         x: platform.x * this.scaleX,
         y: platform.y - 50, // 발판 위에서 시작
@@ -219,7 +225,7 @@ export default class GameScene extends Phaser.Scene {
     }
 
     // 기본: 0번 발판 (시작점) 위에서 시작
-    const startPlatform = mapData[0]
+    const startPlatform = currentMapData[0]
     return {
       x: startPlatform.x * this.scaleX,
       y: startPlatform.y - 50,
@@ -227,7 +233,8 @@ export default class GameScene extends Phaser.Scene {
   }
 
   private createMap() {
-    mapData.forEach((platform: PlatformData, index: number) => {
+    const currentMapData = getMapDataForScreen(this.isMobile)
+    currentMapData.forEach((platform: PlatformData, index: number) => {
       // x 좌표와 너비를 화면 비율에 맞게 조정
       const scaledPlatform: PlatformData = {
         ...platform,
@@ -321,7 +328,8 @@ export default class GameScene extends Phaser.Scene {
   }
 
   private createBirds() {
-    obstacleData.forEach((data) => {
+    const currentObstacleData = getObstacleDataForScreen(this.isMobile)
+    currentObstacleData.forEach((data) => {
       if (data.type === 'bird') {
         // x 좌표와 범위를 화면 비율에 맞게 조정
         const scaledData = {
@@ -337,7 +345,8 @@ export default class GameScene extends Phaser.Scene {
   }
 
   private createSnowLeopards() {
-    snowLeopardData.forEach((data) => {
+    const currentSnowLeopardData = getSnowLeopardDataForScreen(this.isMobile)
+    currentSnowLeopardData.forEach((data) => {
       // x 좌표와 감지 범위를 화면 비율에 맞게 조정
       const scaledData = {
         ...data,
@@ -700,6 +709,14 @@ export default class GameScene extends Phaser.Scene {
 
     const width = gameSize.width
 
+    // 모바일 모드 변경 감지 (960px 경계)
+    const newIsMobile = width <= MOBILE_BREAKPOINT
+    if (newIsMobile !== this.isMobile) {
+      // 모바일 <-> 데스크톱 전환 시 게임 재시작
+      this.restartGame()
+      return
+    }
+
     // 새 스케일 팩터 계산
     const newScaleX = width / GAME_WIDTH
     const scaleRatio = newScaleX / this.scaleX
@@ -740,5 +757,11 @@ export default class GameScene extends Phaser.Scene {
       leopard.setSpawnX(leopard.x) // 새로운 위치 기준으로 스폰 위치 설정
       leopard.setScreenScaleX(this.scaleX)
     })
+  }
+
+  // 게임 재시작 (모바일 <-> 데스크톱 전환 시)
+  private restartGame() {
+    // 현재 씬 정리 후 재시작
+    this.scene.restart()
   }
 }
