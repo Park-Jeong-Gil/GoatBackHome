@@ -44,8 +44,10 @@ export class Bird extends Phaser.Physics.Matter.Sprite {
       body.label = 'bird'
     }
 
-    // 초기 방향 설정 (좌우 랜덤)
-    this.direction = Math.random() > 0.5 ? 1 : -1
+    // 초기 방향 설정 (화면 중앙을 향하도록)
+    // 왼쪽에 있으면 오른쪽으로, 오른쪽에 있으면 왼쪽으로 시작
+    const screenCenter = 480 * scaleX
+    this.direction = data.x < screenCenter ? 1 : -1
     this.setFlipX(this.direction < 0)
   }
 

@@ -229,17 +229,17 @@ export const mobileMapData: PlatformData[] = [
   // 30
   { x: 200, y: 1520, texture: "platform_ice", width: 160, shape: "flat" },
   // 31
-  { x: 480, y: 1390, texture: "platform", width: 140, shape: "flat" },
+  { x: 520, y: 1390, texture: "platform", width: 140, shape: "flat" },
   // 32
-  { x: 700, y: 1260, texture: "platform", width: 150, shape: "slope_up" },
+  { x: 730, y: 1260, texture: "platform", width: 150, shape: "slope_up" },
   // 33
   { x: 350, y: 1130, texture: "platform", width: 160, shape: "flat" },
   // 34
-  { x: 580, y: 1000, texture: "platform", width: 140, shape: "flat" },
+  { x: 600, y: 1000, texture: "platform", width: 140, shape: "flat" },
   // 35
-  { x: 250, y: 870, texture: "platform", width: 150, shape: "flat" },
+  { x: 260, y: 870, texture: "platform", width: 150, shape: "flat" },
   // 36
-  { x: 500, y: 740, texture: "platform", width: 160, shape: "flat" },
+  { x: 580, y: 740, texture: "platform", width: 160, shape: "flat" },
   // 37: 골인 지점
   {
     x: 480,
@@ -271,11 +271,11 @@ export const mobileObstacleData: ObstacleData[] = [
   },
   {
     type: "bird",
-    x: 500,
-    y: 1400,
+    x: 280,
+    y: 800,
     pattern: "horizontal",
-    speed: 8,
-    range: 160,
+    speed: 5,
+    range: 280,
   },
 ];
 
@@ -325,6 +325,8 @@ export function getObstacleDataForScreen(isMobile: boolean): ObstacleData[] {
 }
 
 // 화면 크기에 따른 설표 데이터 반환
-export function getSnowLeopardDataForScreen(isMobile: boolean): SnowLeopardData[] {
+export function getSnowLeopardDataForScreen(
+  isMobile: boolean,
+): SnowLeopardData[] {
   return isMobile ? mobileSnowLeopardData : snowLeopardData;
 }
