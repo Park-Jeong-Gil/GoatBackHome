@@ -29,6 +29,12 @@ export const phaserConfig: Phaser.Types.Core.GameConfig = {
     width: "100%",
     height: "100%",
   },
+  input: {
+    activePointers: 3, // 멀티터치 지원
+    touch: {
+      capture: true, // 터치 이벤트 캡처
+    },
+  },
 };
 
 // 디버그 설정 (개발 모드에서만 사용)

@@ -48,7 +48,10 @@ export class VirtualController {
       this.BUTTON_ALPHA,
     );
     this.leftButton.setStrokeStyle(2, 0x000000, 0.5);
-    this.leftButton.setInteractive();
+    this.leftButton.setInteractive(
+      new Phaser.Geom.Circle(0, 0, this.BUTTON_SIZE),
+      Phaser.Geom.Circle.Contains,
+    );
 
     // 왼쪽 화살표 아이콘
     this.leftArrow = this.scene.add.graphics();
@@ -63,7 +66,10 @@ export class VirtualController {
       this.BUTTON_ALPHA,
     );
     this.rightButton.setStrokeStyle(2, 0x000000, 0.5);
-    this.rightButton.setInteractive();
+    this.rightButton.setInteractive(
+      new Phaser.Geom.Circle(0, 0, this.BUTTON_SIZE),
+      Phaser.Geom.Circle.Contains,
+    );
 
     // 오른쪽 화살표 아이콘
     this.rightArrow = this.scene.add.graphics();
@@ -78,7 +84,10 @@ export class VirtualController {
       this.BUTTON_ALPHA,
     );
     this.jumpButton.setStrokeStyle(2, 0x000000, 0.5);
-    this.jumpButton.setInteractive();
+    this.jumpButton.setInteractive(
+      new Phaser.Geom.Circle(0, 0, this.BUTTON_SIZE),
+      Phaser.Geom.Circle.Contains,
+    );
 
     // 점프 아이콘 (위쪽 화살표)
     this.jumpIcon = this.scene.add.graphics();
