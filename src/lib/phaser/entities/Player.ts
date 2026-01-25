@@ -22,12 +22,19 @@ export class Player extends Phaser.Physics.Matter.Sprite {
   private landedTimer: number = 0
   private readonly LANDED_DURATION: number = 150 // 착지 상태 지속 시간 (ms)
 
+  // 화면 비율 (점프 수평 이동에 적용)
+  private screenScaleX: number = 1
+
+  // 가상 컨트롤러 입력 (모바일용)
+  private virtualDirection: number = 0 // -1: 왼쪽, 0: 없음, 1: 오른쪽
+
   private cursors!: Phaser.Types.Input.Keyboard.CursorKeys
   private spaceKey!: Phaser.Input.Keyboard.Key
 
-  constructor(scene: Phaser.Scene, x: number, y: number) {
+  constructor(scene: Phaser.Scene, x: number, y: number, scaleX: number = 1) {
     super(scene.matter.world, x, y, 'goat')
 
+    this.screenScaleX = scaleX
     scene.add.existing(this)
 
     // 물리 설정
@@ -76,12 +83,36 @@ export class Player extends Phaser.Physics.Matter.Sprite {
     })
   }
 
-  // 현재 방향키 상태 확인
+  // 현재 방향키 상태 확인 (키보드 + 가상 컨트롤러)
   private getDirection(): number {
+    // 가상 컨트롤러 입력 우선
+    if (this.virtualDirection !== 0) return this.virtualDirection
+    // 키보드 입력
     if (!this.cursors) return 0
     if (this.cursors.left.isDown) return -1
     if (this.cursors.right.isDown) return 1
     return 0
+  }
+
+  // 가상 컨트롤러: 방향 설정
+  setVirtualDirection(direction: number) {
+    this.virtualDirection = direction
+  }
+
+  // 가상 컨트롤러: 점프 시작 (차징)
+  startCharging() {
+    if (this.isGrounded) {
+      this.isCharging = true
+    }
+  }
+
+  // 가상 컨트롤러: 점프 실행
+  releaseJump() {
+    if (this.isCharging) {
+      this.jump()
+      this.isCharging = false
+      this.jumpPower = 0
+    }
   }
 
   update(delta: number) {
@@ -145,7 +176,8 @@ export class Player extends Phaser.Physics.Matter.Sprite {
     // 점프 시점에 방향키 상태 확인
     const direction = this.getDirection()
     const power = this.jumpPower
-    const inputDirX = direction * GAME_CONSTANTS.HORIZONTAL_JUMP_RATIO * power
+    // 화면 비율에 맞게 수평 이동 범위 조정
+    const inputDirX = direction * GAME_CONSTANTS.HORIZONTAL_JUMP_RATIO * power * this.screenScaleX
     const dirY = -power
 
     // 기존 x 속도 + 방향키 입력 (미끄러지면서 점프 가능)
@@ -211,5 +243,10 @@ export class Player extends Phaser.Physics.Matter.Sprite {
         y: force.y,
       })
     }
+  }
+
+  // 화면 비율 업데이트 (리사이즈 시)
+  setScreenScaleX(scaleX: number) {
+    this.screenScaleX = scaleX
   }
 }

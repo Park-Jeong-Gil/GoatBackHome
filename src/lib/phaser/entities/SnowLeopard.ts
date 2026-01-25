@@ -23,21 +23,25 @@ export class SnowLeopard extends Phaser.Physics.Matter.Sprite {
   private spawnY: number
   private spawnPlatformIndex: number
   private detectRange: number
-  private moveSpeed: number
+  private baseSpeed: number // 기본 속도 (스케일 적용 전)
+  private moveSpeed: number // 실제 이동 속도 (스케일 적용 후)
   private _state: SnowLeopardState = SnowLeopardState.IDLE
   private isOnSpawnPlatform: boolean = true
   private direction: number = 0 // 1: 오른쪽, -1: 왼쪽, 0: 정지
   private playerRef: Phaser.Physics.Matter.Sprite | null = null
+  private screenScaleX: number = 1 // 화면 비율
 
-  constructor(scene: Phaser.Scene, data: SnowLeopardData) {
+  constructor(scene: Phaser.Scene, data: SnowLeopardData, scaleX: number = 1) {
     // 설표 텍스처 사용 (없으면 placeholder로 goat 사용)
     super(scene.matter.world, data.x, data.y, 'leopard')
 
+    this.screenScaleX = scaleX
     this.spawnX = data.x
     this.spawnY = data.y
     this.spawnPlatformIndex = data.platformIndex
     this.detectRange = data.detectRange || GAME_CONSTANTS.LEOPARD_DETECT_RANGE
-    this.moveSpeed = data.speed || GAME_CONSTANTS.LEOPARD_SPEED
+    this.baseSpeed = data.speed || GAME_CONSTANTS.LEOPARD_SPEED
+    this.moveSpeed = this.baseSpeed * this.screenScaleX
 
     scene.add.existing(this)
 
@@ -218,6 +222,17 @@ export class SnowLeopard extends Phaser.Physics.Matter.Sprite {
   // 스폰 발판 상태 설정
   setOnSpawnPlatform(value: boolean) {
     this.isOnSpawnPlatform = value
+  }
+
+  // 화면 비율 업데이트 (리사이즈 시)
+  setScreenScaleX(scaleX: number) {
+    this.screenScaleX = scaleX
+    this.moveSpeed = this.baseSpeed * this.screenScaleX
+  }
+
+  // 스폰 위치 X 업데이트 (리사이즈 시)
+  setSpawnX(x: number) {
+    this.spawnX = x
   }
 
   destroy(fromScene?: boolean) {

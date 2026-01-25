@@ -2,6 +2,7 @@ import Phaser from 'phaser'
 import { Player } from '../entities/Player'
 import { Bird } from '../entities/Bird'
 import { SnowLeopard, SnowLeopardState } from '../entities/SnowLeopard'
+import { VirtualController } from '../ui/VirtualController'
 import { mapData, obstacleData, snowLeopardData } from '../utils/mapGenerator'
 import { createPlatformBody, extractBodiesFromPlatform } from '../utils/platformFactory'
 import { GAME_WIDTH, MAP_HEIGHT, GAME_CONSTANTS, DEBUG_CONFIG, COLLISION_CATEGORIES, COLLISION_MASKS } from '../config'
@@ -37,6 +38,8 @@ export default class GameScene extends Phaser.Scene {
   private goalDoorSensor: MatterJS.BodyType | null = null
   // 도착 문 시각적 표시
   private goalDoorGraphics: Phaser.GameObjects.Graphics | null = null
+  // 가상 컨트롤러 (모바일용)
+  private virtualController: VirtualController | null = null
 
   constructor() {
     super('GameScene')
@@ -65,7 +68,7 @@ export default class GameScene extends Phaser.Scene {
 
     // 플레이어 시작 위치 결정
     const startPos = this.getPlayerStartPosition()
-    this.player = new Player(this, startPos.x, startPos.y)
+    this.player = new Player(this, startPos.x, startPos.y, this.scaleX)
 
     // 설표에 플레이어 참조 설정
     this.snowLeopards.forEach((leopard) => {
@@ -78,6 +81,11 @@ export default class GameScene extends Phaser.Scene {
 
     // HUD 생성
     this.createHUD()
+
+    // 가상 컨트롤러 생성 (터치 디바이스에서만)
+    if (VirtualController.isTouchDevice()) {
+      this.virtualController = new VirtualController(this, this.player)
+    }
 
     // 충돌 감지 설정
     this.setupCollisions()
@@ -111,6 +119,11 @@ export default class GameScene extends Phaser.Scene {
     if (this.goalDoorGraphics) {
       this.goalDoorGraphics.destroy()
       this.goalDoorGraphics = null
+    }
+    // 가상 컨트롤러 정리
+    if (this.virtualController) {
+      this.virtualController.destroy()
+      this.virtualController = null
     }
     this.scale.off('resize', this.handleResize, this)
     this.events.off('powerChanged', this.updatePowerGauge, this)
@@ -310,13 +323,14 @@ export default class GameScene extends Phaser.Scene {
   private createBirds() {
     obstacleData.forEach((data) => {
       if (data.type === 'bird') {
-        // x 좌표를 화면 비율에 맞게 조정
+        // x 좌표와 범위를 화면 비율에 맞게 조정
         const scaledData = {
           ...data,
           x: data.x * this.scaleX,
           range: data.range ? data.range * this.scaleX : undefined,
         }
-        const bird = new Bird(this, scaledData)
+        // scaleX를 전달하여 이동 속도도 비율에 맞게 조정
+        const bird = new Bird(this, scaledData, this.scaleX)
         this.birds.push(bird)
       }
     })
@@ -330,7 +344,8 @@ export default class GameScene extends Phaser.Scene {
         x: data.x * this.scaleX,
         detectRange: data.detectRange ? data.detectRange * this.scaleX : undefined,
       }
-      const leopard = new SnowLeopard(this, scaledData)
+      // scaleX를 전달하여 이동 속도도 비율에 맞게 조정
+      const leopard = new SnowLeopard(this, scaledData, this.scaleX)
       this.snowLeopards.push(leopard)
     })
   }
@@ -343,6 +358,11 @@ export default class GameScene extends Phaser.Scene {
       // 설표가 살아있는 상태에서 카메라 아래로 벗어나면 사라짐
       if (leopard.isAlive() && leopard.y > cameraBottom + 50) {
         leopard.onFellOffMap()
+      }
+
+      // 리스폰 비활성화 옵션이 켜져있으면 리스폰하지 않음
+      if (DEBUG_CONFIG.DISABLE_LEOPARD_RESPAWN) {
+        return
       }
 
       // 설표가 죽은 상태이고, 카메라가 설표 스폰 위치에서 벗어났으면 리스폰
@@ -374,6 +394,11 @@ export default class GameScene extends Phaser.Scene {
         isSensor: true,
         isStatic: true,
         label: 'goalDoor',
+        collisionFilter: {
+          category: COLLISION_CATEGORIES.PLATFORM,
+          mask: COLLISION_MASKS.PLATFORM,
+          group: 0,
+        },
       }
     )
 
@@ -699,6 +724,21 @@ export default class GameScene extends Phaser.Scene {
     // 플레이어 x 위치도 비율에 맞게 조정
     if (this.player) {
       this.player.setPosition(this.player.x * scaleRatio, this.player.y)
+      this.player.setScreenScaleX(this.scaleX)
     }
+
+    // 새 위치와 속도 업데이트
+    this.birds.forEach((bird) => {
+      bird.setPosition(bird.x * scaleRatio, bird.y)
+      bird.setStartX(bird.x) // 새로운 위치 기준으로 이동 범위 설정
+      bird.setScreenScaleX(this.scaleX)
+    })
+
+    // 설표 위치와 속도 업데이트
+    this.snowLeopards.forEach((leopard) => {
+      leopard.setPosition(leopard.x * scaleRatio, leopard.y)
+      leopard.setSpawnX(leopard.x) // 새로운 위치 기준으로 스폰 위치 설정
+      leopard.setScreenScaleX(this.scaleX)
+    })
   }
 }
