@@ -2,6 +2,8 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
+import GoatImage from "../../public/assets/sprites/goat_idle.png";
 
 export default function Home() {
   const [nickname, setNickname] = useState("");
@@ -37,12 +39,18 @@ export default function Home() {
         <h1 className="text-4xl font-bold text-gray-800 mb-2">
           GOAT BACK HOME
         </h1>
-        <p className="text-gray-600 mb-8">
-          <img src="" alt="" />
-        </p>
+        <p className="text-gray-600 mb-8">산양의 귀환</p>
 
         {/* 산양 아이콘 */}
-        <div className="text-6xl mb-8">🐐</div>
+        <div className="text-6xl mb-8">
+          <Image
+            src={GoatImage}
+            alt="Goat Icon"
+            width={100}
+            height={100}
+            className="inline-block mr-2"
+          />
+        </div>
 
         {/* 닉네임 입력 */}
         <div className="mb-6">
