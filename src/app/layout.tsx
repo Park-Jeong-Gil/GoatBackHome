@@ -13,8 +13,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Goat Back Home - 산양의 귀환",
-  description: "점프킹 스타일의 고난이도 플랫포머 게임. 산양이 되어 험난한 산을 올라 집으로 돌아가세요!",
+  title: "Goat Back Home",
+  description:
+    "점프킹 스타일의 고난이도 플랫포머 게임. 산양이 되어 험난한 산을 올라 집으로 돌아가세요!",
 };
 
 export default function RootLayout({
