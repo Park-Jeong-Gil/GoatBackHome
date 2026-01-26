@@ -22,7 +22,7 @@ export const phaserConfig: Phaser.Types.Core.GameConfig = {
     default: "matter",
     matter: {
       gravity: { x: 0, y: 1 },
-      debug: process.env.NODE_ENV === "development",
+      debug: false,
     },
   },
   scene: [PreloadScene, GameScene, GameOverScene],

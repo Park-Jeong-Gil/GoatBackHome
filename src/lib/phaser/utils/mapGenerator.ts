@@ -4,7 +4,7 @@ import { SnowLeopardData } from "../entities/SnowLeopard";
 // 발판 데이터 (y좌표 내림차순 정렬: 아래 → 위, 시작점 → 골인점)
 export const mapData: PlatformData[] = [
   // 0: 시작 지점
-  { x: 480, y: 5492, texture: "platform", width: 960, shape: "flat" },
+  { x: 480, y: 5505, texture: "platform", width: 960, shape: "flat" },
   // 1
   { x: 300, y: 5350, texture: "platform", width: 120, shape: "flat" },
   // 2
@@ -167,7 +167,7 @@ export const snowLeopardData: SnowLeopardData[] = [
 // - x 좌표: 480 중심으로 ±350 범위 (화면 중앙 집중)
 export const mobileMapData: PlatformData[] = [
   // 0: 시작 지점
-  { x: 480, y: 5492, texture: "platform", width: 960, shape: "flat" },
+  { x: 480, y: 5505, texture: "platform", width: 960, shape: "flat" },
   // 1
   { x: 350, y: 5350, texture: "platform", width: 140, shape: "flat" },
   // 2
