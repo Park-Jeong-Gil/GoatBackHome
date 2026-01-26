@@ -39,7 +39,7 @@ export default function Home() {
         <h1 className="text-4xl font-bold text-gray-800 mb-2">
           GOAT BACK HOME
         </h1>
-        <p className="text-gray-600 mb-8">산양의 귀환</p>
+        <p className="text-gray-600 mb-8">I'm insanely desperate to go home.</p>
 
         {/* 산양 아이콘 */}
         <div className="text-6xl mb-8">
