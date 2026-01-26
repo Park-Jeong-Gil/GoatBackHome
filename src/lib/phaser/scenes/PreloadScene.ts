@@ -47,18 +47,12 @@ export default class PreloadScene extends Phaser.Scene {
     // 배경 이미지 로드
     this.load.image('mountains', '/assets/backgrounds/mountains.webp')
 
-    // 실제 에셋 로드 (파일이 있을 때 주석 해제)
-    // this.load.image('goat_idle', '/assets/sprites/goat_idle.png')
-    // this.load.image('goat_jump', '/assets/sprites/goat_jump.png')
-    // this.load.image('goat_fall', '/assets/sprites/goat_fall.png')
-    // this.load.image('platform', '/assets/tiles/platform_normal.png')
-    // this.load.image('platform_ice', '/assets/tiles/platform_ice.png')
-    // this.load.image('platform_tilted', '/assets/tiles/platform_tilted.png')
-    // this.load.image('bird', '/assets/obstacles/bird.png')
-    // this.load.image('leopard', '/assets/obstacles/leopard.png')
-    // this.load.image('trees', '/assets/backgrounds/trees.png')
-    // this.load.audio('jump', '/assets/sounds/jump.mp3')
-    // this.load.audio('land', '/assets/sounds/land.mp3')
+    // 산양 상태별 이미지 로드
+    this.load.image('goat_idle', '/assets/sprites/goat_idle.png')
+    this.load.image('goat_ready', '/assets/sprites/goat_ready.png')
+    this.load.image('goat_jump', '/assets/sprites/goat_jump.png')
+    this.load.image('goat_fall', '/assets/sprites/goat_fall.png')
+    this.load.image('goat_land', '/assets/sprites/goat_land.png')
   }
 
   create() {
@@ -66,13 +60,6 @@ export default class PreloadScene extends Phaser.Scene {
   }
 
   private createPlaceholderAssets() {
-    // 플레이어 플레이스홀더 (64x64 흰색 사각형)
-    const playerGraphics = this.make.graphics({ x: 0, y: 0 })
-    playerGraphics.fillStyle(0xffffff, 1)
-    playerGraphics.fillRect(0, 0, 64, 64)
-    playerGraphics.generateTexture('goat', 64, 64)
-    playerGraphics.destroy()
-
     // 발판 플레이스홀더 (64x16 갈색 사각형)
     const platformGraphics = this.make.graphics({ x: 0, y: 0 })
     platformGraphics.fillStyle(0x8b4513, 1)

@@ -31,11 +31,17 @@ export class Player extends Phaser.Physics.Matter.Sprite {
   private cursors!: Phaser.Types.Input.Keyboard.CursorKeys
   private spaceKey!: Phaser.Input.Keyboard.Key
 
+  // 스프라이트 표시 크기
+  private readonly SPRITE_SIZE = 64
+
   constructor(scene: Phaser.Scene, x: number, y: number, scaleX: number = 1) {
-    super(scene.matter.world, x, y, 'goat')
+    super(scene.matter.world, x, y, 'goat_idle')
 
     this.screenScaleX = scaleX
     scene.add.existing(this)
+
+    // 스프라이트 크기를 물리 바디에 맞게 조정
+    this.setDisplaySize(this.SPRITE_SIZE, this.SPRITE_SIZE)
 
     // 물리 설정
     this.setFriction(GAME_CONSTANTS.PLAYER_FRICTION)
@@ -127,8 +133,20 @@ export class Player extends Phaser.Physics.Matter.Sprite {
       this.scene.events.emit('powerChanged', this.jumpPower / this.maxPower)
     }
 
+    // 이동 방향에 따라 스프라이트 반전
+    this.updateFlip()
+
     // 상태 업데이트
     this.updateState(delta)
+  }
+
+  // 이동 방향에 따라 스프라이트 좌우 반전
+  private updateFlip() {
+    const velocity = this.body?.velocity as Phaser.Math.Vector2
+    if (velocity && Math.abs(velocity.x) > 0.5) {
+      // 왼쪽으로 이동 시 반전, 오른쪽은 원래 방향
+      this.setFlipX(velocity.x < 0)
+    }
   }
 
   private updateState(delta: number) {
@@ -160,10 +178,34 @@ export class Player extends Phaser.Physics.Matter.Sprite {
       // velocity.y가 -0.5 ~ 0.5 사이면 이전 상태 유지
     }
 
-    // 상태 변경 시 이벤트 발생
+    // 상태 변경 시 텍스처 변경 및 이벤트 발생
     if (prevState !== this._state) {
+      this.updateTexture()
       this.scene.events.emit('playerStateChanged', this._state, prevState)
     }
+  }
+
+  // 상태에 맞는 텍스처로 변경
+  private updateTexture() {
+    switch (this._state) {
+      case PlayerState.IDLE:
+        this.setTexture('goat_idle')
+        break
+      case PlayerState.CHARGING:
+        this.setTexture('goat_ready')
+        break
+      case PlayerState.JUMPING:
+        this.setTexture('goat_jump')
+        break
+      case PlayerState.FALLING:
+        this.setTexture('goat_fall')
+        break
+      case PlayerState.LANDED:
+        this.setTexture('goat_land')
+        break
+    }
+    // 텍스처 변경 후 크기 유지
+    this.setDisplaySize(this.SPRITE_SIZE, this.SPRITE_SIZE)
   }
 
   private jump() {
@@ -189,6 +231,7 @@ export class Player extends Phaser.Physics.Matter.Sprite {
     this.setVelocity(finalDirX, dirY)
     this.isGrounded = false
     this._state = PlayerState.JUMPING
+    this.updateTexture()
 
     // 점프 실행 이벤트
     this.scene.events.emit('jumpExecuted')
@@ -226,6 +269,7 @@ export class Player extends Phaser.Physics.Matter.Sprite {
     if (grounded && wasInAir) {
       this._state = PlayerState.LANDED
       this.landedTimer = this.LANDED_DURATION
+      this.updateTexture()
       this.scene.events.emit('playerStateChanged', PlayerState.LANDED, PlayerState.FALLING)
     }
   }
@@ -235,6 +279,7 @@ export class Player extends Phaser.Physics.Matter.Sprite {
     this.setVelocity(directionX * force, -force * 0.5)
     this.isGrounded = false
     this._state = PlayerState.FALLING
+    this.updateTexture()
   }
 
   // 힘 적용 (얼음 미끄러짐 등)
