@@ -15,7 +15,10 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Goat Back Home",
   description:
-    "점프킹 스타일의 고난이도 플랫포머 게임. 산양이 되어 험난한 산을 올라 집으로 돌아가세요!",
+    "Become a mountain goat and climb the treacherous mountains to find your way back home!",
+  icons: {
+    icon: "/goat.ico",
+  },
 };
 
 export default function RootLayout({
