@@ -31,11 +31,15 @@ export class SnowLeopard extends Phaser.Physics.Matter.Sprite {
   private playerRef: Phaser.Physics.Matter.Sprite | null = null
   private screenScaleX: number = 1 // 화면 비율
 
+  // 스프라이트 표시 크기 (가로로 넓은 형태)
+  private readonly SPRITE_WIDTH = 80
+  private readonly SPRITE_HEIGHT = 48
+
   constructor(scene: Phaser.Scene, data: SnowLeopardData, scaleX: number = 1) {
-    // 크기가 2배가 되었으므로 Y 좌표를 16만큼 아래로 조정
+    // 스프라이트 크기에 맞춰 Y 좌표 조정
     const adjustedY = data.y + 16
-    // 설표 텍스처 사용 (없으면 placeholder로 goat 사용)
-    super(scene.matter.world, data.x, adjustedY, 'leopard')
+    // 설표 텍스처 사용 - 대기 상태로 시작
+    super(scene.matter.world, data.x, adjustedY, 'leopard_stay')
 
     this.screenScaleX = scaleX
     this.spawnX = data.x
@@ -46,6 +50,9 @@ export class SnowLeopard extends Phaser.Physics.Matter.Sprite {
     this.moveSpeed = this.baseSpeed * this.screenScaleX
 
     scene.add.existing(this)
+
+    // 스프라이트 크기를 물리 바디에 맞게 조정
+    this.setDisplaySize(this.SPRITE_WIDTH, this.SPRITE_HEIGHT)
 
     // 물리 바디 설정 - 플레이어와 동일한 설정 (2배 크기)
     this.setBody({
@@ -69,9 +76,6 @@ export class SnowLeopard extends Phaser.Physics.Matter.Sprite {
     if (body) {
       body.label = 'leopard'
     }
-
-    // 시각적 구분을 위해 약간의 틴트 적용 (옵션)
-    this.setTint(0xaaaaaa)
   }
 
   // 플레이어 참조 설정
@@ -112,7 +116,11 @@ export class SnowLeopard extends Phaser.Physics.Matter.Sprite {
       // 돌진 시작
       this._state = SnowLeopardState.CHARGING
       this.direction = playerX > this.x ? 1 : -1
+      // 설표 이미지는 오른쪽을 바라보므로, 왼쪽 이동 시 반전
       this.setFlipX(this.direction < 0)
+      // 달리기 텍스처로 변경
+      this.setTexture('leopard_run')
+      this.setDisplaySize(this.SPRITE_WIDTH, this.SPRITE_HEIGHT)
     }
   }
 
@@ -136,13 +144,19 @@ export class SnowLeopard extends Phaser.Physics.Matter.Sprite {
 
   private updateFalling() {
     // 떨어지는 중에도 같은 방향으로 이동 (방향 변경 없음)
-    const body = this.body as MatterJS.BodyType
-    if (body) {
-      this.scene.matter.body.setVelocity(body, {
-        x: this.moveSpeed * this.direction * 0.01,
-        y: body.velocity.y // y 속도는 물리 엔진에 맡김
-      })
+    // 단, 벽에 닿아서 direction이 0이면 물리 엔진에 완전히 맡겨서 자유낙하
+    if (this.direction !== 0) {
+      // x 속도만 설정, y는 물리 엔진이 중력 적용
+      this.setVelocityX(this.moveSpeed * this.direction * 0.01)
     }
+    // direction이 0이면 아무것도 하지 않음 → 물리 엔진이 중력으로 자유낙하
+  }
+
+  // 벽에 닿았을 때 호출 - 이동 멈추고 벽 충돌 비활성화하여 자유낙하
+  onHitWall() {
+    this.direction = 0
+    // 벽과 충돌하지 않도록 설정하여 끼지 않고 자유낙하
+    this.setCollidesWith(COLLISION_CATEGORIES.PLAYER)
   }
 
   // 발판에 착지했을 때 호출 - 계속 추적 상태로 전환
@@ -171,6 +185,10 @@ export class SnowLeopard extends Phaser.Physics.Matter.Sprite {
     this.isOnSpawnPlatform = true
     this.setVisible(true)
     this.setActive(true)
+
+    // 대기 텍스처로 복원
+    this.setTexture('leopard_stay')
+    this.setDisplaySize(this.SPRITE_WIDTH, this.SPRITE_HEIGHT)
 
     // 물리 바디 재생성 (world에서 제거되었으므로 새로 만들어야 함) - 2배 크기
     this.setBody({

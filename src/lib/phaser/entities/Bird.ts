@@ -11,10 +11,18 @@ export class Bird extends Phaser.Physics.Matter.Sprite {
   private direction: number = 1 // 1: 오른쪽, -1: 왼쪽
   private screenScaleX: number = 1 // 화면 비율
 
+  // 애니메이션용 변수
+  private animTimer: number = 0
+  private readonly ANIM_INTERVAL: number = 200 // 프레임 전환 간격 (ms)
+  private currentFrame: number = 1 // 1 또는 2
+
+  // 스프라이트 표시 크기 (산양과 동일)
+  private readonly SPRITE_SIZE = 64
+
   constructor(scene: Phaser.Scene, data: ObstacleData, scaleX: number = 1) {
-    // 크기가 2배가 되었으므로 Y 좌표를 12만큼 아래로 조정
-    const adjustedY = data.y + 12
-    super(scene.matter.world, data.x, adjustedY, 'bird')
+    // 스프라이트 크기에 맞춰 Y 좌표 조정
+    const adjustedY = data.y + 20
+    super(scene.matter.world, data.x, adjustedY, 'bird_01')
 
     this.screenScaleX = scaleX
     this.startX = data.x
@@ -24,6 +32,9 @@ export class Bird extends Phaser.Physics.Matter.Sprite {
     this.moveSpeed = this.baseSpeed * this.screenScaleX
 
     scene.add.existing(this)
+
+    // 스프라이트 크기를 물리 바디에 맞게 조정
+    this.setDisplaySize(this.SPRITE_SIZE, this.SPRITE_SIZE)
 
     // 물리 바디 설정 (2배 크기)
     this.setBody({
@@ -50,20 +61,31 @@ export class Bird extends Phaser.Physics.Matter.Sprite {
     // 왼쪽에 있으면 오른쪽으로, 오른쪽에 있으면 왼쪽으로 시작
     const screenCenter = 480 * scaleX
     this.direction = data.x < screenCenter ? 1 : -1
-    this.setFlipX(this.direction < 0)
+    // 새 이미지는 왼쪽을 바라보므로, 오른쪽 이동 시 반전
+    this.setFlipX(this.direction > 0)
   }
 
-  update() {
+  update(delta: number = 16) {
+    // 애니메이션 프레임 전환
+    this.animTimer += delta
+    if (this.animTimer >= this.ANIM_INTERVAL) {
+      this.animTimer = 0
+      this.currentFrame = this.currentFrame === 1 ? 2 : 1
+      this.setTexture(`bird_0${this.currentFrame}`)
+      this.setDisplaySize(this.SPRITE_SIZE, this.SPRITE_SIZE)
+    }
+
     // 좌우 이동
     const newX = this.x + this.moveSpeed * this.direction * 0.016 // delta 근사치
 
     // 범위 체크 및 방향 전환
+    // 새 이미지는 왼쪽을 바라보므로, 오른쪽 이동 시 반전
     if (newX > this.startX + this.moveRange) {
       this.direction = -1
-      this.setFlipX(true)
+      this.setFlipX(false) // 왼쪽 이동: 원본 방향
     } else if (newX < this.startX - this.moveRange) {
       this.direction = 1
-      this.setFlipX(false)
+      this.setFlipX(true) // 오른쪽 이동: 반전
     }
 
     // x축 속도만 설정 (y는 고정)

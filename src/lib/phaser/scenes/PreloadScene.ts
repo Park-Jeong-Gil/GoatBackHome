@@ -53,6 +53,14 @@ export default class PreloadScene extends Phaser.Scene {
     this.load.image('goat_jump', '/assets/sprites/goat_jump.png')
     this.load.image('goat_fall', '/assets/sprites/goat_fall.png')
     this.load.image('goat_land', '/assets/sprites/goat_land.png')
+
+    // 새 이미지 로드 (2프레임 애니메이션용)
+    this.load.image('bird_01', '/assets/obstacles/bird_01.png')
+    this.load.image('bird_02', '/assets/obstacles/bird_02.png')
+
+    // 설표 이미지 로드 (상태별)
+    this.load.image('leopard_stay', '/assets/obstacles/leopard_stay.png')
+    this.load.image('leopard_run', '/assets/obstacles/leopard_run.png')
   }
 
   create() {
@@ -87,20 +95,6 @@ export default class PreloadScene extends Phaser.Scene {
     tiltedGraphics.fillRect(0, 0, 64, 16)
     tiltedGraphics.generateTexture('platform_tilted', 64, 16)
     tiltedGraphics.destroy()
-
-    // 새 플레이스홀더 (48x48 빨간 사각형)
-    const birdGraphics = this.make.graphics({ x: 0, y: 0 })
-    birdGraphics.fillStyle(0xff0000, 1)
-    birdGraphics.fillRect(0, 0, 48, 48)
-    birdGraphics.generateTexture('bird', 48, 48)
-    birdGraphics.destroy()
-
-    // 표범 플레이스홀더 (96x64 주황색 사각형)
-    const leopardGraphics = this.make.graphics({ x: 0, y: 0 })
-    leopardGraphics.fillStyle(0xffa500, 1)
-    leopardGraphics.fillRect(0, 0, 96, 64)
-    leopardGraphics.generateTexture('leopard', 96, 64)
-    leopardGraphics.destroy()
 
     // 골인 발판 플레이스홀더 (금색)
     const goalGraphics = this.make.graphics({ x: 0, y: 0 })

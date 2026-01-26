@@ -151,7 +151,7 @@ export default class GameScene extends Phaser.Scene {
     this.player.update(delta)
 
     // 새 장애물 업데이트
-    this.birds.forEach((bird) => bird.update())
+    this.birds.forEach((bird) => bird.update(delta))
 
     // 설표 장애물 업데이트
     this.snowLeopards.forEach((leopard) => leopard.update())
@@ -291,8 +291,8 @@ export default class GameScene extends Phaser.Scene {
       }
     )
     leftWall.collisionFilter = {
-      category: COLLISION_CATEGORIES.PLATFORM,
-      mask: COLLISION_MASKS.PLATFORM,
+      category: COLLISION_CATEGORIES.WALL,
+      mask: COLLISION_MASKS.WALL,
       group: 0,
     }
 
@@ -311,8 +311,8 @@ export default class GameScene extends Phaser.Scene {
       }
     )
     rightWall.collisionFilter = {
-      category: COLLISION_CATEGORIES.PLATFORM,
-      mask: COLLISION_MASKS.PLATFORM,
+      category: COLLISION_CATEGORIES.WALL,
+      mask: COLLISION_MASKS.WALL,
       group: 0,
     }
   }
@@ -558,11 +558,17 @@ export default class GameScene extends Phaser.Scene {
             }
           }
 
-          // 설표와 발판 충돌 감지 (발판에 착지하면 계속 추적)
+          // 설표와 발판/벽 충돌 감지
           this.snowLeopards.forEach((leopard) => {
             const leopardBody = leopard.body as MatterJS.BodyType
             if (bodyA === leopardBody || bodyB === leopardBody) {
               const otherBody = bodyA === leopardBody ? bodyB : bodyA
+
+              // 벽과 충돌 - 이동 멈춤
+              if (otherBody.label === 'wall') {
+                leopard.onHitWall()
+                return
+              }
 
               // 발판과 충돌했고, 설표가 떨어지는 중이면 착지 처리
               const platform = this.platforms.find(
@@ -713,10 +719,7 @@ export default class GameScene extends Phaser.Scene {
     // 스케일 팩터 업데이트
     this.scaleX = newScaleX
 
-    // 월드 경계 업데이트
-    this.matter.world.setBounds(0, 0, width, MAP_HEIGHT)
-
-    // 카메라 경계 업데이트
+    // 카메라 경계 업데이트 (월드 경계는 createWalls()에서 직접 관리)
     this.cameras.main.setBounds(0, 0, width, MAP_HEIGHT)
 
     // 배경 타일 스프라이트 크기 업데이트

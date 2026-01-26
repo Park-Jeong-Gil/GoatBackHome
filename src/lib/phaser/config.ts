@@ -45,7 +45,7 @@ export const DEBUG_CONFIG = {
   // 시작 발판 번호 (null이면 0번 발판에서 시작)
   // 발판 위에 표시된 숫자를 참고하여 설정
   START_PLATFORM_INDEX: null as number | null,
-  // START_PLATFORM_INDEX: 29,
+  // START_PLATFORM_INDEX: 34,
 
   // 설표 리스폰 비활성화 (true면 한번 사라진 설표가 다시 나타나지 않음)
   DISABLE_LEOPARD_RESPAWN: true,
@@ -60,6 +60,7 @@ export const COLLISION_CATEGORIES = {
   PLATFORM: 0x0002, // 발판
   BIRD: 0x0004, // 새 장애물
   LEOPARD: 0x0008, // 설표 장애물
+  WALL: 0x0010, // 화면 경계 벽
 };
 
 // 충돌 마스크 (어떤 카테고리와 충돌할지)
@@ -67,10 +68,12 @@ export const COLLISION_MASKS = {
   PLAYER:
     COLLISION_CATEGORIES.PLATFORM |
     COLLISION_CATEGORIES.BIRD |
-    COLLISION_CATEGORIES.LEOPARD, // 발판, 새, 설표와 충돌
+    COLLISION_CATEGORIES.LEOPARD |
+    COLLISION_CATEGORIES.WALL, // 발판, 새, 설표, 벽과 충돌
   PLATFORM: COLLISION_CATEGORIES.PLAYER | COLLISION_CATEGORIES.LEOPARD, // 플레이어와 설표와 충돌
   BIRD: COLLISION_CATEGORIES.PLAYER, // 플레이어와만 충돌 (발판 통과)
-  LEOPARD: COLLISION_CATEGORIES.PLAYER | COLLISION_CATEGORIES.PLATFORM, // 플레이어와 발판과 충돌
+  LEOPARD: COLLISION_CATEGORIES.PLAYER | COLLISION_CATEGORIES.PLATFORM, // 플레이어와 발판과 충돌 (벽 제외)
+  WALL: COLLISION_CATEGORIES.PLAYER, // 플레이어와만 충돌 (설표는 통과)
 };
 
 // 게임 상수 (테스트 후 조정 필요)
