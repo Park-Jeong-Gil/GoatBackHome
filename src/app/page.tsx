@@ -39,7 +39,9 @@ export default function Home() {
         <h1 className="text-4xl font-bold text-gray-800 mb-2">
           GOAT BACK HOME
         </h1>
-        <p className="text-gray-600 mb-8">I'm insanely desperate to go home.</p>
+        <p className="text-gray-500 mb-6 text-lg">
+          I'm insanely desperate to go home.
+        </p>
 
         {/* 산양 아이콘 */}
         <div className="text-6xl mb-8">
@@ -56,7 +58,7 @@ export default function Home() {
         <div className="mb-6">
           <input
             type="text"
-            placeholder="닉네임 입력 (최대 12자)"
+            placeholder="Nickname Input (Max 12 characters)"
             value={nickname}
             onChange={(e) => setNickname(e.target.value.slice(0, 12))}
             onKeyDown={handleKeyDown}
