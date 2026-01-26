@@ -44,8 +44,8 @@ export class Player extends Phaser.Physics.Matter.Sprite {
     // 충돌 바디 크기 조정 (스프라이트보다 약간 작게)
     this.setBody({
       type: 'rectangle',
-      width: 28,
-      height: 28,
+      width: 56,
+      height: 56,
     })
 
     // 회전 완전 방지

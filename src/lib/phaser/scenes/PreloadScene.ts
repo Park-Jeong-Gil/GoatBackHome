@@ -66,11 +66,11 @@ export default class PreloadScene extends Phaser.Scene {
   }
 
   private createPlaceholderAssets() {
-    // 플레이어 플레이스홀더 (32x32 흰색 사각형)
+    // 플레이어 플레이스홀더 (64x64 흰색 사각형)
     const playerGraphics = this.make.graphics({ x: 0, y: 0 })
     playerGraphics.fillStyle(0xffffff, 1)
-    playerGraphics.fillRect(0, 0, 32, 32)
-    playerGraphics.generateTexture('goat', 32, 32)
+    playerGraphics.fillRect(0, 0, 64, 64)
+    playerGraphics.generateTexture('goat', 64, 64)
     playerGraphics.destroy()
 
     // 발판 플레이스홀더 (64x16 갈색 사각형)
@@ -101,18 +101,18 @@ export default class PreloadScene extends Phaser.Scene {
     tiltedGraphics.generateTexture('platform_tilted', 64, 16)
     tiltedGraphics.destroy()
 
-    // 새 플레이스홀더 (24x24 빨간 사각형)
+    // 새 플레이스홀더 (48x48 빨간 사각형)
     const birdGraphics = this.make.graphics({ x: 0, y: 0 })
     birdGraphics.fillStyle(0xff0000, 1)
-    birdGraphics.fillRect(0, 0, 24, 24)
-    birdGraphics.generateTexture('bird', 24, 24)
+    birdGraphics.fillRect(0, 0, 48, 48)
+    birdGraphics.generateTexture('bird', 48, 48)
     birdGraphics.destroy()
 
-    // 표범 플레이스홀더 (48x32 주황색 사각형)
+    // 표범 플레이스홀더 (96x64 주황색 사각형)
     const leopardGraphics = this.make.graphics({ x: 0, y: 0 })
     leopardGraphics.fillStyle(0xffa500, 1)
-    leopardGraphics.fillRect(0, 0, 48, 32)
-    leopardGraphics.generateTexture('leopard', 48, 32)
+    leopardGraphics.fillRect(0, 0, 96, 64)
+    leopardGraphics.generateTexture('leopard', 96, 64)
     leopardGraphics.destroy()
 
     // 골인 발판 플레이스홀더 (금색)

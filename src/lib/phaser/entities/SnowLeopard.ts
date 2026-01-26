@@ -32,12 +32,14 @@ export class SnowLeopard extends Phaser.Physics.Matter.Sprite {
   private screenScaleX: number = 1 // 화면 비율
 
   constructor(scene: Phaser.Scene, data: SnowLeopardData, scaleX: number = 1) {
+    // 크기가 2배가 되었으므로 Y 좌표를 16만큼 아래로 조정
+    const adjustedY = data.y + 16
     // 설표 텍스처 사용 (없으면 placeholder로 goat 사용)
-    super(scene.matter.world, data.x, data.y, 'leopard')
+    super(scene.matter.world, data.x, adjustedY, 'leopard')
 
     this.screenScaleX = scaleX
     this.spawnX = data.x
-    this.spawnY = data.y
+    this.spawnY = adjustedY
     this.spawnPlatformIndex = data.platformIndex
     this.detectRange = data.detectRange || GAME_CONSTANTS.LEOPARD_DETECT_RANGE
     this.baseSpeed = data.speed || GAME_CONSTANTS.LEOPARD_SPEED
@@ -45,11 +47,11 @@ export class SnowLeopard extends Phaser.Physics.Matter.Sprite {
 
     scene.add.existing(this)
 
-    // 물리 바디 설정 - 플레이어와 동일한 설정
+    // 물리 바디 설정 - 플레이어와 동일한 설정 (2배 크기)
     this.setBody({
       type: 'rectangle',
-      width: 28,
-      height: 28,
+      width: 56,
+      height: 56,
     })
 
     // 플레이어와 동일한 물리 특성
@@ -170,11 +172,11 @@ export class SnowLeopard extends Phaser.Physics.Matter.Sprite {
     this.setVisible(true)
     this.setActive(true)
 
-    // 물리 바디 재생성 (world에서 제거되었으므로 새로 만들어야 함)
+    // 물리 바디 재생성 (world에서 제거되었으므로 새로 만들어야 함) - 2배 크기
     this.setBody({
       type: 'rectangle',
-      width: 28,
-      height: 28,
+      width: 56,
+      height: 56,
     })
     this.setFriction(GAME_CONSTANTS.PLAYER_FRICTION)
     this.setBounce(GAME_CONSTANTS.PLAYER_BOUNCE)

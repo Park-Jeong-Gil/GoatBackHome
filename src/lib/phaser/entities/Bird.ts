@@ -12,22 +12,24 @@ export class Bird extends Phaser.Physics.Matter.Sprite {
   private screenScaleX: number = 1 // 화면 비율
 
   constructor(scene: Phaser.Scene, data: ObstacleData, scaleX: number = 1) {
-    super(scene.matter.world, data.x, data.y, 'bird')
+    // 크기가 2배가 되었으므로 Y 좌표를 12만큼 아래로 조정
+    const adjustedY = data.y + 12
+    super(scene.matter.world, data.x, adjustedY, 'bird')
 
     this.screenScaleX = scaleX
     this.startX = data.x
-    this.startY = data.y
+    this.startY = adjustedY
     this.moveRange = data.range || 200
     this.baseSpeed = data.speed || GAME_CONSTANTS.BIRD_SPEED
     this.moveSpeed = this.baseSpeed * this.screenScaleX
 
     scene.add.existing(this)
 
-    // 물리 바디 설정
+    // 물리 바디 설정 (2배 크기)
     this.setBody({
       type: 'rectangle',
-      width: 32,
-      height: 24,
+      width: 64,
+      height: 48,
     })
 
     // 정적이 아닌 동적 바디로 설정하되, 중력 영향 없음
