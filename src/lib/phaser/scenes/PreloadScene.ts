@@ -6,27 +6,43 @@ export default class PreloadScene extends Phaser.Scene {
   }
 
   preload() {
-    // 로딩 바 표시
-    const progressBar = this.add.graphics()
-    const progressBox = this.add.graphics()
-
     const width = this.cameras.main.width
     const height = this.cameras.main.height
 
-    // 동적 위치 계산
+    // 로딩 텍스트
+    const loadingText = this.add.text(width / 2, height / 2 - 40, 'Loading Game...', {
+      fontSize: '24px',
+      color: '#ffffff',
+      fontFamily: 'monospace',
+    })
+    loadingText.setOrigin(0.5, 0.5)
+
+    // 염소 이모지 (펄스 애니메이션 효과)
+    const goatText = this.add.text(width / 2, height / 2 + 20, '🐐', {
+      fontSize: '48px',
+    })
+    goatText.setOrigin(0.5, 0.5)
+
+    // 펄스 애니메이션
+    this.tweens.add({
+      targets: goatText,
+      scale: { from: 1, to: 1.2 },
+      duration: 500,
+      yoyo: true,
+      repeat: -1,
+    })
+
+    // 진행률 바 (이전 스타일 - 큰 박스)
     const barWidth = 320
     const barHeight = 50
     const barX = (width - barWidth) / 2
-    const barY = (height - barHeight) / 2
+    const barY = height / 2 + 60
 
+    const progressBox = this.add.graphics()
     progressBox.fillStyle(0x222222, 0.8)
     progressBox.fillRect(barX, barY, barWidth, barHeight)
 
-    const loadingText = this.add.text(width / 2, height / 2 - 50, 'Loading...', {
-      fontSize: '20px',
-      color: '#ffffff',
-    })
-    loadingText.setOrigin(0.5, 0.5)
+    const progressBar = this.add.graphics()
 
     // 로딩 진행률 표시
     this.load.on('progress', (value: number) => {
@@ -39,6 +55,7 @@ export default class PreloadScene extends Phaser.Scene {
       progressBar.destroy()
       progressBox.destroy()
       loadingText.destroy()
+      goatText.destroy()
     })
 
     // 임시 플레이스홀더 에셋 생성 (나중에 실제 에셋으로 교체)

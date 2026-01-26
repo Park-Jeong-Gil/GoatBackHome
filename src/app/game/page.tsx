@@ -8,10 +8,11 @@ import { Suspense } from 'react'
 const GameCanvas = dynamic(() => import('@/components/game/GameCanvas'), {
   ssr: false,
   loading: () => (
-    <div className="w-full h-screen flex items-center justify-center bg-black text-white">
-      <div className="text-center">
-        <div className="text-2xl mb-4">Loading Game...</div>
-        <div className="animate-pulse">🐐</div>
+    <div className="w-full h-screen bg-[#2a2a2a] flex flex-col items-center justify-center">
+      <p className="text-white text-2xl font-mono mb-6">Loading Game...</p>
+      <div className="text-5xl animate-pulse mb-8">🐐</div>
+      <div className="w-[320px] h-[50px] bg-black/80 p-[10px]">
+        <div className="w-0 h-full bg-white" />
       </div>
     </div>
   ),

@@ -11,13 +11,15 @@ interface GameCanvasProps {
 export default function GameCanvas({ nickname }: GameCanvasProps) {
   const gameRef = useRef<Phaser.Game | null>(null)
 
+  // 닉네임 저장 (별도 effect)
   useEffect(() => {
-    // 닉네임 저장
     if (nickname) {
       localStorage.setItem('goat_nickname', nickname)
     }
+  }, [nickname])
 
-    // Phaser 게임 인스턴스 생성
+  // Phaser 게임 인스턴스 생성 (마운트 시 한 번만)
+  useEffect(() => {
     if (!gameRef.current) {
       gameRef.current = new Phaser.Game(phaserConfig)
     }
@@ -29,7 +31,7 @@ export default function GameCanvas({ nickname }: GameCanvasProps) {
         gameRef.current = null
       }
     }
-  }, [nickname])
+  }, [])
 
   return (
     <div
