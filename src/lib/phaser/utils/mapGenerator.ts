@@ -28,15 +28,15 @@ export const mapData: PlatformData[] = [
   // 11
   { x: 80, y: 3850, texture: "platform", width: 130, shape: "flat" },
   // 12
-  { x: 600, y: 3700, texture: "platform_ice", width: 140, shape: "flat" },
+  { x: 600, y: 3700, texture: "platform", width: 140, shape: "flat" },
   // 13
   { x: 340, y: 3550, texture: "platform", width: 130, shape: "slope_down" }, // slope_down
   // 14
-  { x: 880, y: 3300, texture: "platform_ice", width: 100, shape: "flat" },
+  { x: 880, y: 3300, texture: "platform", width: 100, shape: "flat" },
   // 15
   { x: 200, y: 3250, texture: "platform", width: 130, shape: "flat" },
   // 16
-  { x: 620, y: 3100, texture: "platform_ice", width: 120, shape: "flat" },
+  { x: 620, y: 3100, texture: "platform", width: 120, shape: "flat" },
   // 17
   { x: 280, y: 2950, texture: "platform", width: 120, shape: "flat" },
   // 18
@@ -54,7 +54,7 @@ export const mapData: PlatformData[] = [
   // 24
   { x: 80, y: 1800, texture: "platform", width: 90, shape: "slope_up" },
   // 25
-  { x: 220, y: 1750, texture: "platform_ice", width: 100, shape: "flat" },
+  { x: 220, y: 1750, texture: "platform", width: 100, shape: "flat" },
   // 26
   { x: 700, y: 1600, texture: "platform", width: 90, shape: "flat" },
   // 27
@@ -64,7 +64,7 @@ export const mapData: PlatformData[] = [
   // 29
   { x: 880, y: 1200, texture: "platform", width: 90, shape: "slope_down" },
   // 30
-  { x: 160, y: 1150, texture: "platform_ice", width: 90, shape: "flat" },
+  { x: 160, y: 1150, texture: "platform", width: 90, shape: "flat" },
   // 31
   { x: 520, y: 1000, texture: "platform", width: 100, shape: "flat" },
   // 32
