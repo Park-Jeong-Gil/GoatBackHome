@@ -44,6 +44,9 @@ export default class PreloadScene extends Phaser.Scene {
     // 임시 플레이스홀더 에셋 생성 (나중에 실제 에셋으로 교체)
     this.createPlaceholderAssets()
 
+    // 배경 이미지 로드
+    this.load.image('mountains', '/assets/backgrounds/mountains.webp')
+
     // 실제 에셋 로드 (파일이 있을 때 주석 해제)
     // this.load.image('goat_idle', '/assets/sprites/goat_idle.png')
     // this.load.image('goat_jump', '/assets/sprites/goat_jump.png')
@@ -53,7 +56,6 @@ export default class PreloadScene extends Phaser.Scene {
     // this.load.image('platform_tilted', '/assets/tiles/platform_tilted.png')
     // this.load.image('bird', '/assets/obstacles/bird.png')
     // this.load.image('leopard', '/assets/obstacles/leopard.png')
-    // this.load.image('mountains', '/assets/backgrounds/mountains.png')
     // this.load.image('trees', '/assets/backgrounds/trees.png')
     // this.load.audio('jump', '/assets/sounds/jump.mp3')
     // this.load.audio('land', '/assets/sounds/land.mp3')

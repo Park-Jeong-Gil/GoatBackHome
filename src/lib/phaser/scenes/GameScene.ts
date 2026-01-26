@@ -42,6 +42,8 @@ export default class GameScene extends Phaser.Scene {
   private virtualController: VirtualController | null = null
   // 모바일 모드 여부 (960px 이하)
   private isMobile: boolean = false
+  // 배경 타일 스프라이트
+  private backgroundTile: Phaser.GameObjects.TileSprite | null = null
 
   constructor() {
     super('GameScene')
@@ -56,8 +58,16 @@ export default class GameScene extends Phaser.Scene {
     // 모바일 모드 감지 (960px 이하)
     this.isMobile = this.scale.width <= MOBILE_BREAKPOINT
 
-    // 배경색 설정
-    this.cameras.main.setBackgroundColor('#87CEEB')
+    // 타일 스프라이트 배경 생성 (전체 맵 높이만큼)
+    this.backgroundTile = this.add.tileSprite(
+      0,
+      0,
+      this.scale.width,
+      MAP_HEIGHT,
+      'mountains'
+    )
+    this.backgroundTile.setOrigin(0, 0)
+    this.backgroundTile.setDepth(-10) // 가장 뒤에 배치
 
     // 좌우 벽 생성 (플레이어만 충돌, 새는 통과)
     this.createWalls()
@@ -129,6 +139,11 @@ export default class GameScene extends Phaser.Scene {
     if (this.virtualController) {
       this.virtualController.destroy()
       this.virtualController = null
+    }
+    // 배경 타일 스프라이트 정리
+    if (this.backgroundTile) {
+      this.backgroundTile.destroy()
+      this.backgroundTile = null
     }
     this.scale.off('resize', this.handleResize, this)
     this.events.off('powerChanged', this.updatePowerGauge, this)
@@ -729,6 +744,11 @@ export default class GameScene extends Phaser.Scene {
 
     // 카메라 경계 업데이트
     this.cameras.main.setBounds(0, 0, width, MAP_HEIGHT)
+
+    // 배경 타일 스프라이트 크기 업데이트
+    if (this.backgroundTile) {
+      this.backgroundTile.setSize(width, MAP_HEIGHT)
+    }
 
     // 발판 위치와 크기 업데이트
     this.platformBodies.forEach(({ body, originalX, originalWidth }) => {
