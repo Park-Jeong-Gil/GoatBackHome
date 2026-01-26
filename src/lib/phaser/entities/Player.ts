@@ -176,9 +176,12 @@ export class Player extends Phaser.Physics.Matter.Sprite {
     // 점프 시점에 방향키 상태 확인
     const direction = this.getDirection()
     const power = this.jumpPower
-    // 화면 비율에 맞게 수평 이동 범위 조정
-    const inputDirX = direction * GAME_CONSTANTS.HORIZONTAL_JUMP_RATIO * power * this.screenScaleX
-    const dirY = -power
+    // 모바일(scaleX <= 1)은 화면 비율 적용, PC(scaleX > 1)는 고정 폭 사용
+    const horizontalScale = this.screenScaleX <= 1 ? this.screenScaleX : 1
+    const inputDirX = direction * GAME_CONSTANTS.HORIZONTAL_JUMP_RATIO * power * horizontalScale
+    // PC에서는 점프 높이를 20% 증가
+    const verticalScale = this.screenScaleX > 1 ? 1.2 : 1
+    const dirY = -power * verticalScale
 
     // 기존 x 속도 + 방향키 입력 (미끄러지면서 점프 가능)
     const finalDirX = currentVelX * 0.7 + inputDirX
