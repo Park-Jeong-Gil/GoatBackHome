@@ -77,6 +77,7 @@ export const COLLISION_MASKS = {
 export const GAME_CONSTANTS = {
   // 플레이어 설정
   PLAYER_FRICTION: 0.005,
+  PLAYER_FRICTION_ON_ICE: 0.0001, // 얼음 위에서의 플레이어 마찰력 (천천히 미끄러짐)
   PLAYER_BOUNCE: 0.2,
   MAX_JUMP_POWER: 25,
   CHARGE_RATE: 50, // per second

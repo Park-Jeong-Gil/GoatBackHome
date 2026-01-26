@@ -32,8 +32,6 @@ export default class GameScene extends Phaser.Scene {
   private isInitialized: boolean = false
   // 현재 플레이어가 밟고 있는 얼음 발판
   private currentIcePlatform: Phaser.Physics.Matter.Image | null = null
-  // 얼음에 착지할 때의 x 속도 (이 방향으로 미끄러짐)
-  private iceSlideVelocity: number = 0
   // 도착 문 센서
   private goalDoorSensor: MatterJS.BodyType | null = null
   // 도착 문 시각적 표시
@@ -123,7 +121,6 @@ export default class GameScene extends Phaser.Scene {
     this.isInitialized = false
     this.platformBodies = []
     this.currentIcePlatform = null
-    this.iceSlideVelocity = 0
     this.goalDoorSensor = null
     // 새 정리
     this.birds.forEach((bird) => bird.destroy())
@@ -165,9 +162,6 @@ export default class GameScene extends Phaser.Scene {
     // HUD 업데이트
     this.updateHUD()
 
-    // 얼음 위에서 미끄러짐 처리
-    this.handleIceSliding(delta)
-
     // 도착 문 그래픽 위치 업데이트 (골 발판 추적)
     this.updateGoalDoorGraphics()
 
@@ -175,25 +169,6 @@ export default class GameScene extends Phaser.Scene {
     if (this.player.isOnGoalPlatform) {
       const elapsed = Math.floor((Date.now() - this.startTime) / 1000)
       this.handleClear(elapsed)
-    }
-  }
-
-  private handleIceSliding(delta: number) {
-    if (!this.currentIcePlatform || !this.player.isGrounded) {
-      return
-    }
-
-    // 착지 시 저장된 속도 방향으로 미끄러짐
-    if (Math.abs(this.iceSlideVelocity) > 0.5) {
-      const slideDirection = Math.sign(this.iceSlideVelocity)
-      const slideForce = 0.0003 * delta  // 약한 지속 힘
-
-      this.player.applySlideForce(
-        new Phaser.Math.Vector2(slideDirection * slideForce, 0)
-      )
-
-      // 미끄러짐 속도 서서히 감소
-      this.iceSlideVelocity *= 0.995
     }
   }
 
@@ -572,13 +547,10 @@ export default class GameScene extends Phaser.Scene {
             if (platform) {
               collidingPlatforms.add(platform)
 
-              // 얼음 발판에 착지 - 착지 순간의 x 속도 저장
+              // 얼음 발판에 착지 - 플레이어 마찰력 낮춤
               if (platform.getData('isIce') === true) {
                 this.currentIcePlatform = platform
-                const velocity = this.player.body?.velocity as Phaser.Math.Vector2
-                if (velocity) {
-                  this.iceSlideVelocity = velocity.x
-                }
+                this.player.setFrictionValue(GAME_CONSTANTS.PLAYER_FRICTION_ON_ICE)
               }
 
               // 골 판정은 문(door sensor)에서만 처리하므로 false 전달
@@ -640,10 +612,10 @@ export default class GameScene extends Phaser.Scene {
           }
         })
 
-        // 얼음 위가 아니면 얼음 상태 해제
-        if (!isOnIce) {
+        // 얼음 위가 아니면 얼음 상태 해제 및 마찰력 복원
+        if (!isOnIce && this.currentIcePlatform) {
           this.currentIcePlatform = null
-          this.iceSlideVelocity = 0
+          this.player.resetFriction()
         }
 
         // 충돌 중인 발판이 있으면 착지 상태 유지 (골 판정은 문 센서에서만)
@@ -678,10 +650,10 @@ export default class GameScene extends Phaser.Scene {
             if (platform) {
               collidingPlatforms.delete(platform)
 
-              // 얼음 발판에서 벗어남
+              // 얼음 발판에서 벗어남 - 마찰력 복원
               if (platform.getData('isIce') === true) {
                 this.currentIcePlatform = null
-                this.iceSlideVelocity = 0
+                this.player.resetFriction()
               }
             }
           }
@@ -690,8 +662,10 @@ export default class GameScene extends Phaser.Scene {
         // 충돌 중인 발판이 없으면 공중 상태
         if (collidingPlatforms.size === 0) {
           this.player.setGrounded(false, false)
-          this.currentIcePlatform = null
-          this.iceSlideVelocity = 0
+          if (this.currentIcePlatform) {
+            this.currentIcePlatform = null
+            this.player.resetFriction()
+          }
         }
       }
     )

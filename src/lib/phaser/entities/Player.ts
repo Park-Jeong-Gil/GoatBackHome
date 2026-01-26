@@ -252,4 +252,14 @@ export class Player extends Phaser.Physics.Matter.Sprite {
   setScreenScaleX(scaleX: number) {
     this.screenScaleX = scaleX
   }
+
+  // 마찰력 동적 변경 (얼음 발판용)
+  setFrictionValue(friction: number) {
+    this.setFriction(friction)
+  }
+
+  // 기본 마찰력으로 복원
+  resetFriction() {
+    this.setFriction(GAME_CONSTANTS.PLAYER_FRICTION)
+  }
 }

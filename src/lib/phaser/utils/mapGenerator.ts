@@ -12,7 +12,7 @@ export const mapData: PlatformData[] = [
   // 3
   { x: 100, y: 5050, texture: "platform", width: 160, shape: "slope_up" },
   // 4
-  { x: 880, y: 4850, texture: "platform", width: 120, shape: "L_reverse" },
+  { x: 880, y: 4850, texture: "platform", width: 120, shape: "flat" }, // L_reverse
   // 5
   { x: 500, y: 4750, texture: "platform", width: 150, shape: "flat" },
   // 6
@@ -20,7 +20,7 @@ export const mapData: PlatformData[] = [
   // 7
   { x: 620, y: 4300, texture: "platform", width: 150, shape: "slope_up" },
   // 8
-  { x: 880, y: 4200, texture: "platform", width: 110, shape: "T" },
+  { x: 880, y: 4200, texture: "platform", width: 110, shape: "flat" }, // T
   // 9
   { x: 280, y: 4150, texture: "platform", width: 140, shape: "flat" },
   // 10
@@ -30,7 +30,7 @@ export const mapData: PlatformData[] = [
   // 12
   { x: 600, y: 3700, texture: "platform_ice", width: 140, shape: "flat" },
   // 13
-  { x: 340, y: 3550, texture: "platform", width: 130, shape: "slope_down" },
+  { x: 340, y: 3550, texture: "platform", width: 130, shape: "slope_down" }, // slope_down
   // 14
   { x: 880, y: 3300, texture: "platform_ice", width: 100, shape: "flat" },
   // 15
@@ -42,9 +42,9 @@ export const mapData: PlatformData[] = [
   // 18
   { x: 700, y: 2800, texture: "platform", width: 120, shape: "slope_up" },
   // 19
-  { x: 80, y: 2700, texture: "platform", width: 100, shape: "T" },
+  { x: 80, y: 2700, texture: "platform", width: 100, shape: "flat" }, // T
   // 20
-  { x: 880, y: 2400, texture: "platform", width: 100, shape: "L_reverse" },
+  { x: 880, y: 2400, texture: "platform", width: 100, shape: "flat" }, // L_reverse
   // 21
   { x: 280, y: 2350, texture: "platform", width: 110, shape: "flat" },
   // 22
