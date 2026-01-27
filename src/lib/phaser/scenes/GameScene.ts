@@ -115,6 +115,9 @@ export default class GameScene extends Phaser.Scene {
 
     // 초기화 완료
     this.isInitialized = true
+
+    // React에 게임 준비 완료 알림
+    window.dispatchEvent(new CustomEvent('gameReady'))
   }
 
   private cleanup() {

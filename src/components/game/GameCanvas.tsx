@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import Phaser from 'phaser'
 import { phaserConfig } from '@/lib/phaser/config'
 
@@ -10,6 +10,8 @@ interface GameCanvasProps {
 
 export default function GameCanvas({ nickname }: GameCanvasProps) {
   const gameRef = useRef<Phaser.Game | null>(null)
+  const [isLoading, setIsLoading] = useState(true)
+  const [loadProgress, setLoadProgress] = useState(0)
 
   // 닉네임 저장 (별도 effect)
   useEffect(() => {
@@ -22,21 +24,51 @@ export default function GameCanvas({ nickname }: GameCanvasProps) {
   useEffect(() => {
     if (!gameRef.current) {
       gameRef.current = new Phaser.Game(phaserConfig)
-    }
 
-    // 클린업
-    return () => {
-      if (gameRef.current) {
-        gameRef.current.destroy(true)
-        gameRef.current = null
+      // 로딩 진행률 이벤트 리스너
+      const handleLoadProgress = (e: CustomEvent<number>) => {
+        setLoadProgress(e.detail)
+      }
+
+      // 게임 준비 완료 이벤트 리스너
+      const handleGameReady = () => {
+        setIsLoading(false)
+      }
+
+      window.addEventListener('loadProgress', handleLoadProgress as EventListener)
+      window.addEventListener('gameReady', handleGameReady)
+
+      return () => {
+        window.removeEventListener('loadProgress', handleLoadProgress as EventListener)
+        window.removeEventListener('gameReady', handleGameReady)
+        if (gameRef.current) {
+          gameRef.current.destroy(true)
+          gameRef.current = null
+        }
       }
     }
   }, [])
 
   return (
-    <div
-      id="game-container"
-      className="w-full h-full flex items-center justify-center bg-black"
-    />
+    <div className="w-full h-full relative">
+      {/* 로딩 화면 - 게임 준비 전까지 표시 */}
+      {isLoading && (
+        <div className="absolute inset-0 z-10 bg-[#2a2a2a] flex flex-col items-center justify-center">
+          <p className="text-white text-2xl font-mono mb-6">Loading Game...</p>
+          <div className="text-5xl animate-pulse mb-8">🐐</div>
+          <div className="w-[320px] h-[50px] bg-black/80 p-[10px]">
+            <div
+              className="h-full bg-white transition-all duration-100"
+              style={{ width: `${loadProgress * 100}%` }}
+            />
+          </div>
+        </div>
+      )}
+      {/* 게임 컨테이너 */}
+      <div
+        id="game-container"
+        className="w-full h-full"
+      />
+    </div>
   )
 }
