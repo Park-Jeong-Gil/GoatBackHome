@@ -43,11 +43,11 @@ input.pixel-ui {
     0px 5px #555,
     0px -5px #555,
     5px 0px #555,
-    -5px 0px #555
-      /* 0px 10px #00000038,
-    5px 5px #00000038,
-    -5px 5px #00000038,
-    inset 0px 5px #ffffff36; */;
+    -5px 0px #555,
+    0px 10px #0000001d,
+    5px 5px #0000001d,
+    -5px 5px #0000001d,
+    inset 0px 5px #bdbdbd60;
   margin-bottom: 16px;
   outline: none;
 }
