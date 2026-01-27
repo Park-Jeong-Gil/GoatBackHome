@@ -31,6 +31,11 @@ export default class PreloadScene extends Phaser.Scene {
     // 설표 이미지 로드 (상태별)
     this.load.image('leopard_stay', '/assets/obstacles/leopard_stay.png')
     this.load.image('leopard_run', '/assets/obstacles/leopard_run.png')
+
+    // 발판 이미지 로드 (랜덤 선택용)
+    for (let i = 1; i <= 10; i++) {
+      this.load.image(`platform_${i}`, `/assets/platform/platform_${i}.png`)
+    }
   }
 
   create() {

@@ -6,10 +6,26 @@ import {
   COLLISION_MASKS,
 } from "../config";
 
-const PLATFORM_THICKNESS = 16; // 발판 두께
+const PLATFORM_THICKNESS = 32; // 발판 시각적 두께
+const COLLISION_HEIGHT = 12; // 충돌 영역 높이 (얇게)
+// 양수 오프셋: 스프라이트가 아래로 → 충돌 영역이 이미지 상단 눈 표면에 위치
+const SPRITE_Y_OFFSET = -0.1; // 미세 조정 값
 const LIP_HEIGHT = 20; // 턱 높이 (낮게)
 const LIP_WIDTH = 16; // 턱 너비
 const SLOPE_FLAT_LENGTH = 25; // 경사 양 끝 평지 길이
+const PLATFORM_TEXTURE_COUNT = 10; // 랜덤 발판 이미지 개수
+
+/**
+ * 랜덤 발판 텍스처 선택
+ * "platform" 텍스처인 경우 platform_1 ~ platform_10 중 랜덤 선택
+ */
+function getRandomPlatformTexture(texture: string): string {
+  if (texture === "platform") {
+    const randomIndex = Math.floor(Math.random() * PLATFORM_TEXTURE_COUNT) + 1;
+    return `platform_${randomIndex}`;
+  }
+  return texture;
+}
 
 /**
  * 발판에 충돌 카테고리 설정 (플레이어와만 충돌, 새는 통과)
@@ -100,16 +116,23 @@ function createFlatShape(
   width: number,
   friction: number,
 ): Phaser.Physics.Matter.Image {
-  const texture = platform.isGoal ? "platform_goal" : platform.texture;
+  const texture = platform.isGoal
+    ? "platform_goal"
+    : getRandomPlatformTexture(platform.texture);
   const p = scene.matter.add.image(platform.x, platform.y, texture);
   p.setStatic(true);
   p.setFriction(friction);
   p.setDisplaySize(width, PLATFORM_THICKNESS);
-  p.setBody({
-    type: "rectangle",
-    width: width,
-    height: PLATFORM_THICKNESS,
-  });
+  p.setBody(
+    {
+      type: "rectangle",
+      width: width,
+      height: COLLISION_HEIGHT,
+    },
+    {
+      render: { sprite: { yOffset: SPRITE_Y_OFFSET } },
+    },
+  );
   p.setStatic(true);
 
   if (platform.angle) {
@@ -131,33 +154,35 @@ function createLShape(
   reversed: boolean,
 ): Phaser.GameObjects.Container {
   const container = scene.add.container(platform.x, platform.y);
+  const texture = getRandomPlatformTexture(platform.texture);
 
   // 바닥 부분 (위치 버그 수정)
-  const floor = scene.matter.add.image(
-    platform.x,
-    platform.y,
-    platform.texture,
-  );
+  const floor = scene.matter.add.image(platform.x, platform.y, texture);
   floor.setStatic(true);
   floor.setFriction(friction);
   floor.setDisplaySize(width, PLATFORM_THICKNESS);
-  floor.setBody({
-    type: "rectangle",
-    width: width,
-    height: PLATFORM_THICKNESS,
-  });
+  floor.setBody(
+    {
+      type: "rectangle",
+      width: width,
+      height: COLLISION_HEIGHT,
+    },
+    {
+      render: { sprite: { yOffset: SPRITE_Y_OFFSET } },
+    },
+  );
   floor.setStatic(true);
 
   // 턱 부분 (낮은 높이)
   const lipX = reversed
     ? width / 2 - LIP_WIDTH / 2
     : -(width / 2 - LIP_WIDTH / 2);
-  const lipY = -(LIP_HEIGHT / 2 + PLATFORM_THICKNESS / 2);
+  const lipY = -(LIP_HEIGHT / 2 + COLLISION_HEIGHT / 2);
 
   const lip = scene.matter.add.image(
     platform.x + lipX,
     platform.y + lipY,
-    platform.texture,
+    texture,
   );
   lip.setStatic(true);
   lip.setFriction(friction);
@@ -189,31 +214,33 @@ function createTShape(
   friction: number,
 ): Phaser.GameObjects.Container {
   const container = scene.add.container(platform.x, platform.y);
+  const texture = getRandomPlatformTexture(platform.texture);
 
   // 바닥 부분
-  const floor = scene.matter.add.image(
-    platform.x,
-    platform.y,
-    platform.texture,
-  );
+  const floor = scene.matter.add.image(platform.x, platform.y, texture);
   floor.setStatic(true);
   floor.setFriction(friction);
   floor.setDisplaySize(width, PLATFORM_THICKNESS);
-  floor.setBody({
-    type: "rectangle",
-    width: width,
-    height: PLATFORM_THICKNESS,
-  });
+  floor.setBody(
+    {
+      type: "rectangle",
+      width: width,
+      height: COLLISION_HEIGHT,
+    },
+    {
+      render: { sprite: { yOffset: SPRITE_Y_OFFSET } },
+    },
+  );
   floor.setStatic(true);
 
   // 왼쪽 턱
   const leftLipX = -(width / 2 - LIP_WIDTH / 2);
-  const lipY = -(LIP_HEIGHT / 2 + PLATFORM_THICKNESS / 2);
+  const lipY = -(LIP_HEIGHT / 2 + COLLISION_HEIGHT / 2);
 
   const leftLip = scene.matter.add.image(
     platform.x + leftLipX,
     platform.y + lipY,
-    platform.texture,
+    texture,
   );
   leftLip.setStatic(true);
   leftLip.setFriction(friction);
@@ -231,7 +258,7 @@ function createTShape(
   const rightLip = scene.matter.add.image(
     platform.x + rightLipX,
     platform.y + lipY,
-    platform.texture,
+    texture,
   );
   rightLip.setStatic(true);
   rightLip.setFriction(friction);
@@ -268,6 +295,7 @@ function createSlopeShape(
   goingUp: boolean,
 ): Phaser.GameObjects.Container {
   const container = scene.add.container(platform.x, platform.y);
+  const texture = getRandomPlatformTexture(platform.texture);
 
   const slopeWidth = width - SLOPE_FLAT_LENGTH * 2;
   const slopeAngle = goingUp ? -12 : 12; // 완만한 경사
@@ -283,32 +311,38 @@ function createSlopeShape(
   const leftFlat = scene.matter.add.image(
     platform.x + leftFlatX,
     platform.y + leftFlatY,
-    platform.texture,
+    texture,
   );
   leftFlat.setStatic(true);
   leftFlat.setFriction(friction);
   leftFlat.setDisplaySize(SLOPE_FLAT_LENGTH, PLATFORM_THICKNESS);
-  leftFlat.setBody({
-    type: "rectangle",
-    width: SLOPE_FLAT_LENGTH,
-    height: PLATFORM_THICKNESS,
-  });
+  leftFlat.setBody(
+    {
+      type: "rectangle",
+      width: SLOPE_FLAT_LENGTH,
+      height: COLLISION_HEIGHT,
+    },
+    {
+      render: { sprite: { yOffset: SPRITE_Y_OFFSET } },
+    },
+  );
   leftFlat.setStatic(true);
 
   // 중앙 경사 (중심은 platform.y에 위치)
-  const slope = scene.matter.add.image(
-    platform.x,
-    platform.y,
-    platform.texture,
-  );
+  const slope = scene.matter.add.image(platform.x, platform.y, texture);
   slope.setStatic(true);
   slope.setFriction(friction * 0.5); // 경사는 미끄러움
   slope.setDisplaySize(slopeWidth, PLATFORM_THICKNESS);
-  slope.setBody({
-    type: "rectangle",
-    width: slopeWidth,
-    height: PLATFORM_THICKNESS,
-  });
+  slope.setBody(
+    {
+      type: "rectangle",
+      width: slopeWidth,
+      height: COLLISION_HEIGHT,
+    },
+    {
+      render: { sprite: { yOffset: SPRITE_Y_OFFSET } },
+    },
+  );
   slope.setStatic(true);
   slope.setAngle(slopeAngle);
 
@@ -319,16 +353,21 @@ function createSlopeShape(
   const rightFlat = scene.matter.add.image(
     platform.x + rightFlatX,
     platform.y + rightFlatY,
-    platform.texture,
+    texture,
   );
   rightFlat.setStatic(true);
   rightFlat.setFriction(friction);
   rightFlat.setDisplaySize(SLOPE_FLAT_LENGTH, PLATFORM_THICKNESS);
-  rightFlat.setBody({
-    type: "rectangle",
-    width: SLOPE_FLAT_LENGTH,
-    height: PLATFORM_THICKNESS,
-  });
+  rightFlat.setBody(
+    {
+      type: "rectangle",
+      width: SLOPE_FLAT_LENGTH,
+      height: COLLISION_HEIGHT,
+    },
+    {
+      render: { sprite: { yOffset: SPRITE_Y_OFFSET } },
+    },
+  );
   rightFlat.setStatic(true);
 
   applyPlatformCollision(leftFlat);
