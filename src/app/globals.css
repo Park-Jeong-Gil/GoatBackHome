@@ -36,3 +36,45 @@ body {
 main {
   background-image: url("../../public/assets/backgrounds/main-bg.png");
 }
+
+input.pixel-ui {
+  border: 0;
+  box-shadow:
+    0px 5px #555,
+    0px -5px #555,
+    5px 0px #555,
+    -5px 0px #555
+      /* 0px 10px #00000038,
+    5px 5px #00000038,
+    -5px 5px #00000038,
+    inset 0px 5px #ffffff36; */;
+  margin-bottom: 16px;
+  outline: none;
+}
+button.pixel-ui {
+  color: #fff;
+  letter-spacing: 1px;
+  /* background-color: #6abc3a; */
+  padding: 15px 40px 15px 40px;
+  font-size: 14px;
+  border: 0;
+  box-shadow:
+    0px 5px black,
+    0px -5px black,
+    5px 0px black,
+    -5px 0px black,
+    0px 10px #00000038,
+    5px 5px #00000038,
+    -5px 5px #00000038,
+    inset 0px 5px #ffffff36;
+  cursor: pointer;
+}
+button.pixel-ui:active {
+  transform: translateY(5px);
+  box-shadow:
+    0px 5px black,
+    0px -5px black,
+    5px 0px black,
+    -5px 0px black,
+    inset 0px 5px #00000038;
+}

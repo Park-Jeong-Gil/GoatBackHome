@@ -91,22 +91,22 @@ export default function Home() {
             value={nickname}
             onChange={(e) => setNickname(e.target.value.slice(0, 12))}
             onKeyDown={handleKeyDown}
-            className="w-full px-4 py-3 rounded-lg border-2 border-gray-300 focus:border-sky-500 focus:outline-none text-center text-lg text-gray-600"
+            className="pixel-ui w-full px-4 py-3 text-center text-lg text-gray-600"
           />
         </div>
 
         {/* 버튼들 */}
-        <div className="space-y-3">
+        <div className="space-y-3 flex flex-col gap-3">
           <button
             onClick={handlePlay}
-            className="w-full py-4 bg-green-500 hover:bg-green-600 text-white text-xl font-bold rounded-lg transition-colors shadow-lg"
+            className="pixel-ui w-full py-4 text-white text-xl font-bold bg-[#1DA1F2]"
           >
             PLAY GAME
           </button>
 
           <button
             onClick={() => router.push("/leaderboard")}
-            className="w-full py-3 bg-yellow-500 hover:bg-yellow-600 text-white text-lg font-semibold rounded-lg transition-colors"
+            className="pixel-ui w-full py-3 text-white text-lg font-semibold bg-[#1DA1F2]"
           >
             LEADERBOARD
           </button>
@@ -117,7 +117,7 @@ export default function Home() {
                 "조작법:\n\n⬅️➡️ 방향키: 점프 방향\nSPACE: 점프 (길게 누르면 차징)\n\n목표: 산 정상까지 올라가세요!\n주의: 표범에게 잡히면 게임오버!",
               )
             }
-            className="w-full py-3 bg-gray-500 hover:bg-gray-600 text-white text-lg font-semibold rounded-lg transition-colors"
+            className="pixel-ui w-full py-3 text-white text-lg font-semibold bg-[#1DA1F2]"
           >
             HOW TO PLAY
           </button>
