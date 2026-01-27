@@ -116,9 +116,8 @@ function createFlatShape(
   width: number,
   friction: number,
 ): Phaser.Physics.Matter.Image {
-  const texture = platform.isGoal
-    ? "platform_goal"
-    : getRandomPlatformTexture(platform.texture);
+  // 골인 발판도 일반 발판 이미지 사용
+  const texture = getRandomPlatformTexture(platform.texture);
   const p = scene.matter.add.image(platform.x, platform.y, texture);
   p.setStatic(true);
   p.setFriction(friction);

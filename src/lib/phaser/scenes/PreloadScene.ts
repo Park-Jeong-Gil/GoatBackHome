@@ -16,6 +16,7 @@ export default class PreloadScene extends Phaser.Scene {
 
     // 배경 이미지 로드
     this.load.image('mountains', '/assets/backgrounds/mountains.webp')
+    this.load.image('goal', '/assets/backgrounds/goal.png')
 
     // 산양 상태별 이미지 로드
     this.load.image('goat_idle', '/assets/sprites/goat_idle.png')
