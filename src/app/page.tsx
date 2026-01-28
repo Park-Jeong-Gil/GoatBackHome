@@ -114,7 +114,7 @@ export default function Home() {
           <button
             onClick={() =>
               alert(
-                "조작법:\n\n⬅️➡️ 방향키: 점프 방향\nSPACE: 점프 (길게 누르면 차징)\n\n목표: 산 정상까지 올라가세요!\n주의: 표범에게 잡히면 게임오버!",
+                "조작법:\n⬅️➡️ 방향키: 점프 방향\nSPACE, ⬆️: 점프 (길게 누르면 차징)\n\n목표: 산 정상까지 올라가세요!\n주의: 표범에게 잡히면 게임오버! \n\n이 게임은 Nexile의 'Jump King'에서 영감을 받았습니다.",
               )
             }
             className="pixel-ui w-full py-3 text-white text-lg font-semibold bg-[#1DA1F2]"
@@ -125,7 +125,15 @@ export default function Home() {
 
         {/* 푸터 */}
         <p className="mt-8 text-sm text-gray-500">
-          © 2026 by girgir. All rights reserved.
+          © 2026 by{" "}
+          <a
+            href="https://girgir.dev"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            girgir
+          </a>
+          . All rights reserved.
         </p>
       </div>
     </main>
