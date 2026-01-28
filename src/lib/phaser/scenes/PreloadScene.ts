@@ -37,6 +37,10 @@ export default class PreloadScene extends Phaser.Scene {
     for (let i = 1; i <= 10; i++) {
       this.load.image(`platform_${i}`, `/assets/platform/platform_${i}.png`)
     }
+
+    // UI 아이콘 로드 (모바일 컨트롤러용)
+    this.load.image('ui_up', '/assets/ui/up_icon.png')
+    this.load.image('ui_side', '/assets/ui/side_icon.png')
   }
 
   create() {

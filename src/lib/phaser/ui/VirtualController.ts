@@ -5,17 +5,15 @@ export class VirtualController {
   private scene: Phaser.Scene;
   private player: Player;
 
-  private leftButton!: Phaser.GameObjects.Arc;
-  private rightButton!: Phaser.GameObjects.Arc;
-  private jumpButton!: Phaser.GameObjects.Arc;
+  private leftButton!: Phaser.GameObjects.Image;
+  private rightButton!: Phaser.GameObjects.Image;
+  private jumpButton!: Phaser.GameObjects.Image;
 
-  private leftArrow!: Phaser.GameObjects.Graphics;
-  private rightArrow!: Phaser.GameObjects.Graphics;
-  private jumpIcon!: Phaser.GameObjects.Graphics;
-
-  private readonly BUTTON_ALPHA = 0.5;
-  private readonly BUTTON_SIZE = 50; // 터치 영역 확대
-  private readonly BUTTON_SPACING = 120;
+  private readonly BUTTON_ALPHA = 0.7;
+  private readonly BUTTON_PRESSED_ALPHA = 1;
+  private readonly BUTTON_SCALE = 1; // 픽셀 아이콘 크기 조절
+  private readonly DIRECTION_GAP = 100; // 방향키 간 간격
+  private readonly SIDE_MARGIN = 80; // 화면 가장자리 여백
   private readonly BOTTOM_MARGIN = 120;
 
   constructor(scene: Phaser.Scene, player: Player) {
@@ -31,152 +29,90 @@ export class VirtualController {
   }
 
   private createButtons() {
-    const buttonColor = 0xffffff;
-
-    // 왼쪽 버튼 (Container 없이 직접 생성)
-    this.leftButton = this.scene.add.circle(0, 0, this.BUTTON_SIZE, buttonColor, this.BUTTON_ALPHA);
-    this.leftButton.setStrokeStyle(3, 0x000000, 0.6);
+    // 왼쪽 버튼 (side_icon을 flip해서 사용)
+    this.leftButton = this.scene.add.image(0, 0, "ui_side");
+    this.leftButton.setFlipX(true); // 왼쪽을 향하도록 반전
+    this.leftButton.setScale(this.BUTTON_SCALE);
+    this.leftButton.setAlpha(this.BUTTON_ALPHA);
     this.leftButton.setScrollFactor(0);
     this.leftButton.setDepth(200);
     this.leftButton.setInteractive({ useHandCursor: false });
 
-    // 왼쪽 화살표 아이콘
-    this.leftArrow = this.scene.add.graphics();
-    this.leftArrow.setScrollFactor(0);
-    this.leftArrow.setDepth(201);
-
-    // 오른쪽 버튼
-    this.rightButton = this.scene.add.circle(0, 0, this.BUTTON_SIZE, buttonColor, this.BUTTON_ALPHA);
-    this.rightButton.setStrokeStyle(3, 0x000000, 0.6);
+    // 오른쪽 버튼 (side_icon 그대로 사용)
+    this.rightButton = this.scene.add.image(0, 0, "ui_side");
+    this.rightButton.setScale(this.BUTTON_SCALE);
+    this.rightButton.setAlpha(this.BUTTON_ALPHA);
     this.rightButton.setScrollFactor(0);
     this.rightButton.setDepth(200);
     this.rightButton.setInteractive({ useHandCursor: false });
 
-    // 오른쪽 화살표 아이콘
-    this.rightArrow = this.scene.add.graphics();
-    this.rightArrow.setScrollFactor(0);
-    this.rightArrow.setDepth(201);
-
-    // 점프 버튼
-    this.jumpButton = this.scene.add.circle(0, 0, this.BUTTON_SIZE, buttonColor, this.BUTTON_ALPHA);
-    this.jumpButton.setStrokeStyle(3, 0x000000, 0.6);
+    // 점프 버튼 (up_icon 사용)
+    this.jumpButton = this.scene.add.image(0, 0, "ui_up");
+    this.jumpButton.setScale(this.BUTTON_SCALE);
+    this.jumpButton.setAlpha(this.BUTTON_ALPHA);
     this.jumpButton.setScrollFactor(0);
     this.jumpButton.setDepth(200);
     this.jumpButton.setInteractive({ useHandCursor: false });
-
-    // 점프 아이콘 (위쪽 화살표)
-    this.jumpIcon = this.scene.add.graphics();
-    this.jumpIcon.setScrollFactor(0);
-    this.jumpIcon.setDepth(201);
-  }
-
-  private drawArrow(graphics: Phaser.GameObjects.Graphics, x: number, y: number, direction: number) {
-    graphics.clear();
-    graphics.fillStyle(0x333333, 0.9);
-
-    const size = 18;
-    const offsetX = direction * 5;
-
-    graphics.beginPath();
-    if (direction < 0) {
-      // 왼쪽 화살표
-      graphics.moveTo(x - size + offsetX, y);
-      graphics.lineTo(x + size / 2 + offsetX, y - size);
-      graphics.lineTo(x + size / 2 + offsetX, y + size);
-    } else {
-      // 오른쪽 화살표
-      graphics.moveTo(x + size + offsetX, y);
-      graphics.lineTo(x - size / 2 + offsetX, y - size);
-      graphics.lineTo(x - size / 2 + offsetX, y + size);
-    }
-    graphics.closePath();
-    graphics.fillPath();
-  }
-
-  private drawJumpIcon(graphics: Phaser.GameObjects.Graphics, x: number, y: number) {
-    graphics.clear();
-    graphics.fillStyle(0x333333, 0.9);
-
-    const size = 18;
-
-    // 위쪽 화살표
-    graphics.beginPath();
-    graphics.moveTo(x, y - size);
-    graphics.lineTo(x - size, y + size / 2);
-    graphics.lineTo(x + size, y + size / 2);
-    graphics.closePath();
-    graphics.fillPath();
   }
 
   private setupInput() {
     // 왼쪽 버튼
     this.leftButton.on("pointerdown", () => {
-      console.log("Left button pressed"); // 디버그용
       this.player.setVirtualDirection(-1);
-      this.leftButton.setFillStyle(0xaaaaaa, 0.7);
+      this.leftButton.setAlpha(this.BUTTON_PRESSED_ALPHA);
     });
     this.leftButton.on("pointerup", () => {
       this.player.setVirtualDirection(0);
-      this.leftButton.setFillStyle(0xffffff, this.BUTTON_ALPHA);
+      this.leftButton.setAlpha(this.BUTTON_ALPHA);
     });
     this.leftButton.on("pointerout", () => {
       this.player.setVirtualDirection(0);
-      this.leftButton.setFillStyle(0xffffff, this.BUTTON_ALPHA);
+      this.leftButton.setAlpha(this.BUTTON_ALPHA);
     });
 
     // 오른쪽 버튼
     this.rightButton.on("pointerdown", () => {
-      console.log("Right button pressed"); // 디버그용
       this.player.setVirtualDirection(1);
-      this.rightButton.setFillStyle(0xaaaaaa, 0.7);
+      this.rightButton.setAlpha(this.BUTTON_PRESSED_ALPHA);
     });
     this.rightButton.on("pointerup", () => {
       this.player.setVirtualDirection(0);
-      this.rightButton.setFillStyle(0xffffff, this.BUTTON_ALPHA);
+      this.rightButton.setAlpha(this.BUTTON_ALPHA);
     });
     this.rightButton.on("pointerout", () => {
       this.player.setVirtualDirection(0);
-      this.rightButton.setFillStyle(0xffffff, this.BUTTON_ALPHA);
+      this.rightButton.setAlpha(this.BUTTON_ALPHA);
     });
 
     // 점프 버튼
     this.jumpButton.on("pointerdown", () => {
-      console.log("Jump button pressed"); // 디버그용
       this.player.startCharging();
-      this.jumpButton.setFillStyle(0xaaaaaa, 0.7);
+      this.jumpButton.setAlpha(this.BUTTON_PRESSED_ALPHA);
     });
     this.jumpButton.on("pointerup", () => {
-      console.log("Jump button released"); // 디버그용
       this.player.releaseJump();
-      this.jumpButton.setFillStyle(0xffffff, this.BUTTON_ALPHA);
+      this.jumpButton.setAlpha(this.BUTTON_ALPHA);
     });
     this.jumpButton.on("pointerout", () => {
       this.player.releaseJump();
-      this.jumpButton.setFillStyle(0xffffff, this.BUTTON_ALPHA);
+      this.jumpButton.setAlpha(this.BUTTON_ALPHA);
     });
   }
 
   private updatePosition = () => {
     const width = this.scene.scale.width;
     const height = this.scene.scale.height;
-
-    const centerX = width / 2;
     const buttonY = height - this.BOTTOM_MARGIN;
 
-    // 왼쪽 버튼: 중앙에서 왼쪽으로
-    const leftX = centerX - this.BUTTON_SPACING;
-    this.leftButton.setPosition(leftX, buttonY);
-    this.drawArrow(this.leftArrow, leftX, buttonY, -1);
+    // 왼쪽에 방향키 두 개 (⬅️ ➡️)
+    this.leftButton.setPosition(this.SIDE_MARGIN, buttonY);
+    this.rightButton.setPosition(
+      this.SIDE_MARGIN + this.DIRECTION_GAP,
+      buttonY,
+    );
 
-    // 오른쪽 버튼: 중앙
-    const rightX = centerX;
-    this.rightButton.setPosition(rightX, buttonY);
-    this.drawArrow(this.rightArrow, rightX, buttonY, 1);
-
-    // 점프 버튼: 중앙에서 오른쪽으로
-    const jumpX = centerX + this.BUTTON_SPACING;
-    this.jumpButton.setPosition(jumpX, buttonY);
-    this.drawJumpIcon(this.jumpIcon, jumpX, buttonY);
+    // 오른쪽에 점프 버튼 (⬆️)
+    this.jumpButton.setPosition(width - this.SIDE_MARGIN, buttonY + -10);
   };
 
   // 터치 디바이스 여부 확인
@@ -190,8 +126,5 @@ export class VirtualController {
     this.leftButton.destroy();
     this.rightButton.destroy();
     this.jumpButton.destroy();
-    this.leftArrow.destroy();
-    this.rightArrow.destroy();
-    this.jumpIcon.destroy();
   }
 }
