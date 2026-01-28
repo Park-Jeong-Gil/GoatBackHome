@@ -98,6 +98,13 @@ export class Bird extends Phaser.Physics.Matter.Sprite {
     return this.direction
   }
 
+  // 이동 방향 반전 (플레이어와 충돌 시)
+  reverseDirection() {
+    this.direction *= -1
+    // 새 이미지는 왼쪽을 바라보므로, 오른쪽 이동 시 반전
+    this.setFlipX(this.direction > 0)
+  }
+
   // 화면 비율 업데이트 (리사이즈 시)
   setScreenScaleX(scaleX: number) {
     this.screenScaleX = scaleX

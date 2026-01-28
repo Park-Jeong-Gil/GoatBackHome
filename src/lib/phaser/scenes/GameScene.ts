@@ -536,6 +536,8 @@ export default class GameScene extends Phaser.Scene {
                   knockbackDir,
                   GAME_CONSTANTS.BIRD_KNOCKBACK,
                 );
+                // 새도 방향 전환
+                bird.reverseDirection();
               }
               return;
             }
