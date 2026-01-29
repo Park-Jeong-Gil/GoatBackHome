@@ -39,16 +39,16 @@ export default function SoundSettingsModal({
         <div className="mb-5 text-left">
           <div className="flex items-center justify-between mb-2">
             <span className="text-sm font-bold text-gray-700">BGM</span>
-            <button
-              onClick={toggleBgmMute}
-              className={`text-xs font-bold px-3 py-1 rounded transition-colors ${
-                bgmMuted
-                  ? "bg-gray-300 text-gray-500"
-                  : "bg-blue-500 text-white"
-              }`}
-            >
-              {bgmMuted ? "OFF" : "ON"}
-            </button>
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-bold text-gray-400">
+                {bgmMuted ? "OFF" : "ON"}
+              </span>
+              <button
+                onClick={toggleBgmMute}
+                className={`pixel-toggle ${!bgmMuted ? "active" : ""}`}
+                aria-label={bgmMuted ? "BGM 켜기" : "BGM 끄기"}
+              />
+            </div>
           </div>
           <div className="flex items-center gap-3">
             <input
@@ -61,7 +61,7 @@ export default function SoundSettingsModal({
               disabled={bgmMuted}
               className="pixel-slider w-full"
             />
-            <span className="text-xs font-bold text-gray-500 w-10 text-right">
+            <span className="text-sm font-bold text-gray-500 w-10 text-right">
               {bgmMuted ? 0 : Math.round(bgmVolume * 100)}%
             </span>
           </div>
@@ -71,16 +71,16 @@ export default function SoundSettingsModal({
         <div className="mb-6 text-left">
           <div className="flex items-center justify-between mb-2">
             <span className="text-sm font-bold text-gray-700">Effect</span>
-            <button
-              onClick={toggleSfxMute}
-              className={`text-xs font-bold px-3 py-1 rounded transition-colors ${
-                sfxMuted
-                  ? "bg-gray-300 text-gray-500"
-                  : "bg-green-500 text-white"
-              }`}
-            >
-              {sfxMuted ? "OFF" : "ON"}
-            </button>
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-bold text-gray-400">
+                {sfxMuted ? "OFF" : "ON"}
+              </span>
+              <button
+                onClick={toggleSfxMute}
+                className={`pixel-toggle ${!sfxMuted ? "active" : ""}`}
+                aria-label={sfxMuted ? "효과음 켜기" : "효과음 끄기"}
+              />
+            </div>
           </div>
           <div className="flex items-center gap-3">
             <input
@@ -93,7 +93,7 @@ export default function SoundSettingsModal({
               disabled={sfxMuted}
               className="pixel-slider w-full"
             />
-            <span className="text-xs font-bold text-gray-500 w-10 text-right">
+            <span className="text-sm font-bold text-gray-500 w-10 text-right">
               {sfxMuted ? 0 : Math.round(sfxVolume * 100)}%
             </span>
           </div>
