@@ -3,6 +3,7 @@ import { Player } from "../entities/Player";
 import { Bird } from "../entities/Bird";
 import { SnowLeopard, SnowLeopardState } from "../entities/SnowLeopard";
 import { VirtualController } from "../ui/VirtualController";
+import { AudioManager } from "../audio/AudioManager";
 import {
   getMapDataForScreen,
   getObstacleDataForScreen,
@@ -133,8 +134,13 @@ export default class GameScene extends Phaser.Scene {
     // 씬 종료 시 정리
     this.events.on("shutdown", this.cleanup, this);
 
-    // 배경음 재생 (무한 루프)
-    this.sound.play("bgm", { loop: true });
+    // 오디오 매니저 초기화 및 배경음 재생
+    AudioManager.getInstance().init(this.sound);
+    AudioManager.getInstance().playBgm("bgm");
+
+    // 사운드 설정 모달 일시정지/재개 이벤트
+    window.addEventListener("gamePauseRequest", this.handlePauseRequest);
+    window.addEventListener("gameResumeRequest", this.handleResumeRequest);
 
     // 초기화 완료
     this.isInitialized = true;
@@ -143,13 +149,25 @@ export default class GameScene extends Phaser.Scene {
     window.dispatchEvent(new CustomEvent("gameReady"));
   }
 
+  private handlePauseRequest = () => {
+    if (this.scene.isActive()) {
+      this.scene.pause();
+    }
+  };
+
+  private handleResumeRequest = () => {
+    if (this.scene.isPaused()) {
+      this.scene.resume();
+    }
+  };
+
   private cleanup() {
     this.isInitialized = false;
     this.platformBodies = [];
     this.currentIcePlatform = null;
     this.goalDoorSensor = null;
     // 사운드 정리
-    this.sound.stopAll();
+    AudioManager.getInstance().stopAll();
     // 새 정리
     this.birds.forEach((bird) => bird.destroy());
     this.birds = [];
@@ -173,6 +191,8 @@ export default class GameScene extends Phaser.Scene {
     this.scale.off("resize", this.handleResize, this);
     this.events.off("powerChanged", this.updatePowerGauge, this);
     this.events.off("jumpExecuted", this.hidePowerGauge, this);
+    window.removeEventListener("gamePauseRequest", this.handlePauseRequest);
+    window.removeEventListener("gameResumeRequest", this.handleResumeRequest);
   }
 
   update(time: number, delta: number) {
@@ -652,7 +672,7 @@ export default class GameScene extends Phaser.Scene {
               );
               if (bird) {
                 // 충돌 효과음
-                this.sound.play("sfx_bump", { volume: 0.7 });
+                AudioManager.getInstance().playSfx("sfx_bump");
                 // 넉백 적용 (새가 날아가는 방향으로 밀림)
                 const knockbackDir = bird.getKnockbackDirection();
                 this.player.applyKnockback(
@@ -672,7 +692,7 @@ export default class GameScene extends Phaser.Scene {
               );
               if (leopard && leopard.isAlive()) {
                 // 충돌 효과음
-                this.sound.play("sfx_bump", { volume: 0.7 });
+                AudioManager.getInstance().playSfx("sfx_bump");
                 this.handleGameOver();
               }
               return;

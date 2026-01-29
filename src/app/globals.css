@@ -91,3 +91,48 @@ button.pixel-ui:active {
     -4px 0px #333,
     inset 0px 4px #00000038;
 }
+
+/* 픽셀아트 스타일 볼륨 슬라이더 */
+input[type="range"].pixel-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 12px;
+  background: #2a2a2a;
+  outline: none;
+  border: none;
+  box-shadow:
+    0px 2px #444,
+    0px -2px #444,
+    2px 0px #444,
+    -2px 0px #444;
+}
+input[type="range"].pixel-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 22px;
+  background: #ffffff;
+  cursor: pointer;
+  box-shadow:
+    0px 2px #333,
+    0px -2px #333,
+    2px 0px #333,
+    -2px 0px #333;
+}
+input[type="range"].pixel-slider::-moz-range-thumb {
+  width: 18px;
+  height: 22px;
+  background: #ffffff;
+  cursor: pointer;
+  border: none;
+  border-radius: 0;
+  box-shadow:
+    0px 2px #333,
+    0px -2px #333,
+    2px 0px #333,
+    -2px 0px #333;
+}
+input[type="range"].pixel-slider:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}

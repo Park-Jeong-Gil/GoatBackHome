@@ -1,5 +1,6 @@
 import Phaser from 'phaser'
 import { GAME_CONSTANTS, MAP_HEIGHT, COLLISION_CATEGORIES, COLLISION_MASKS } from '../config'
+import { AudioManager } from '../audio/AudioManager'
 
 // 플레이어 상태 enum
 export enum PlayerState {
@@ -130,10 +131,14 @@ export class Player extends Phaser.Physics.Matter.Sprite {
 
   // 차징 효과음 시작 (루프)
   private startChargingSound() {
+    const audio = AudioManager.getInstance()
     if (!this.chargingSound) {
-      this.chargingSound = this.scene.sound.add('sfx_powerup', { loop: true, volume: 0.7 })
+      this.chargingSound = audio.createLoopingSfx('sfx_powerup')
     }
     if (!this.chargingSound.isPlaying) {
+      // 재생 전 현재 볼륨 적용
+      const vol = audio.isSfxMuted() ? 0 : audio.getSfxVolume();
+      (this.chargingSound as Phaser.Sound.WebAudioSound).setVolume(vol)
       this.chargingSound.play()
     }
   }
@@ -265,7 +270,7 @@ export class Player extends Phaser.Physics.Matter.Sprite {
     this.updateTexture()
 
     // 점프 효과음
-    this.scene.sound.play('sfx_jump', { volume: 0.7 })
+    AudioManager.getInstance().playSfx('sfx_jump')
 
     // 점프 실행 이벤트
     this.scene.events.emit('jumpExecuted')
@@ -312,7 +317,7 @@ export class Player extends Phaser.Physics.Matter.Sprite {
       this.scene.events.emit('playerStateChanged', PlayerState.LANDED, PlayerState.FALLING)
 
       // 착지 효과음
-      this.scene.sound.play('sfx_landing', { volume: 0.7 })
+      AudioManager.getInstance().playSfx('sfx_landing')
     }
   }
 
