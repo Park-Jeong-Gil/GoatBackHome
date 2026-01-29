@@ -148,6 +148,8 @@ export default class GameScene extends Phaser.Scene {
     this.platformBodies = [];
     this.currentIcePlatform = null;
     this.goalDoorSensor = null;
+    // 사운드 정리
+    this.sound.stopAll();
     // 새 정리
     this.birds.forEach((bird) => bird.destroy());
     this.birds = [];
