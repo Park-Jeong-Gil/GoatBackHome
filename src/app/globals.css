@@ -39,25 +39,15 @@ main {
 
 h1.title {
   font-size: 40px;
-  /* color: transparent; */
-  color: #0a0a0a;
-  /* background: linear-gradient(
-    0deg,
-    rgba(34, 193, 195, 1) 0%,
-    rgba(253, 187, 45, 1) 100%
-  ); */
+  color: transparent;
+  /* color: #0a0a0a; */
+  background: linear-gradient(0deg, #cdd8eb 50%, #fff 50%);
   background-clip: text;
   -webkit-background-clip: text;
-  /* text-shadow:
-    3px 3px 0px black,
-    -3px -3px 0px black,
-    -3px 3px 0px black,
-    3px -3px 0px black,
-    3px 0px 0px black; */
-  /* filter:
-    drop-shadow(3px 3px 0px black), drop-shadow(-3px -3px 0px black),
-    drop-shadow(-3px 3px 0px black), drop-shadow(3px -3px 0px black),
-    drop-shadow(3px 0px 0px black); */
+  transform: scale(1.1);
+  filter: drop-shadow(3px 3px 0px #1d2235) drop-shadow(-3px -3px 0px #1d2235)
+    drop-shadow(-3px 3px 0px #1d2235) drop-shadow(3px -3px 0px #1d2235)
+    drop-shadow(0px 4px 0px #6f789e);
 }
 
 input.pixel-ui {
@@ -77,7 +67,7 @@ input.pixel-ui {
 button.pixel-ui {
   color: #fff;
   letter-spacing: 1px;
-  /* background-color: #6abc3a; */
+  /* background-color: #1DA1F2; */
   padding: 12px 40px 12px 40px;
   /* font-size: 14px; */
   border: 0;

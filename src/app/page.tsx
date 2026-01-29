@@ -51,29 +51,15 @@ export default function Home() {
 
   return (
     <main className="min-h-screen bg-gradient-to-b from-sky-400 to-sky-600 flex flex-col items-center justify-center p-4">
-      <div className="bg-white/90 backdrop-blur rounded-2xl shadow-2xl px-4 py-8 w-full max-w-md text-center">
+      <div className="bg-white/90 backdrop-blur rounded-2xl shadow-2xl px-4 py-10 w-full max-w-md text-center">
         {/* 타이틀 */}
-        <h1
-          className="title text-4xl font-bold mb-2"
-          style={
-            {
-              // fontVariationSettings: `"wght" 900, "ital" 1`,
-              // textAlign: "center",
-              // color: "transparent",
-              // WebkitTextStroke: "2px #d6f4f4",
-              // color: "#ff003c",
-              // textShadow: `5px 5px 0px #07bccc`,
-            }
-          }
-        >
-          GOAT BACK HOME
-        </h1>
+        <h1 className="title text-4xl font-bold mb-3">GOAT BACK HOME</h1>
         <p className="text-gray-500 mb-6 text-md">
           I'm insanely desperate to go home.
         </p>
 
         {/* 산양 아이콘 */}
-        <div className="text-6xl mb-8">
+        <div className="text-6xl mb-4">
           <Image
             src={GoatImage}
             alt="Goat Icon"
@@ -84,44 +70,46 @@ export default function Home() {
           />
         </div>
 
-        {/* 닉네임 입력 */}
-        <div className="mb-6">
-          <input
-            type="text"
-            placeholder="Nickname Input (Max 12 characters)"
-            value={nickname}
-            onChange={(e) => setNickname(e.target.value.slice(0, 12))}
-            onKeyDown={handleKeyDown}
-            className="pixel-ui w-full px-4 py-3 text-center text-lg text-gray-600"
-          />
-        </div>
+        <div className="px-4">
+          {/* 닉네임 입력 */}
+          <div className="mb-6">
+            <input
+              type="text"
+              placeholder="Nickname Input (Max 12 characters)"
+              value={nickname}
+              onChange={(e) => setNickname(e.target.value.slice(0, 12))}
+              onKeyDown={handleKeyDown}
+              className="pixel-ui w-full px-4 py-3 text-center text-lg text-gray-600"
+            />
+          </div>
 
-        {/* 버튼들 */}
-        <div className="space-y-3 flex flex-col gap-3">
-          <button
-            onClick={handlePlay}
-            className="pixel-ui w-full py-4 text-white text-xl font-bold bg-[#1DA1F2]"
-          >
-            PLAY GAME
-          </button>
+          {/* 버튼들 */}
+          <div className="space-y-3 flex flex-col gap-3">
+            <button
+              onClick={handlePlay}
+              className="pixel-ui w-full py-4 text-white text-xl font-bold bg-[#6997e6]"
+            >
+              PLAY GAME
+            </button>
 
-          <button
-            onClick={() => router.push("/leaderboard")}
-            className="pixel-ui w-full py-3 text-white text-lg font-semibold bg-[#1DA1F2]"
-          >
-            LEADERBOARD
-          </button>
+            <button
+              onClick={() => router.push("/leaderboard")}
+              className="pixel-ui w-full py-3 text-white text-lg font-semibold bg-[#3bc6d8]"
+            >
+              LEADERBOARD
+            </button>
 
-          <button
-            onClick={() =>
-              alert(
-                "조작법:\n⬅️➡️ 방향키: 점프 방향\nSPACE, ⬆️: 점프 (길게 누르면 차징)\n\n목표: 산 정상까지 올라가세요!\n주의: 표범에게 잡히면 게임오버! \n\n이 게임은 Nexile의 'Jump King'에서 영감을 받았습니다.",
-              )
-            }
-            className="pixel-ui w-full py-3 text-white text-lg font-semibold bg-[#1DA1F2]"
-          >
-            HOW TO PLAY
-          </button>
+            <button
+              onClick={() =>
+                alert(
+                  "조작법\n⬅️➡️: 점프 방향\nSPACE or ⬆️: 점프 (길게 누르면 차징)\n방향키를 누른채 점프를 해야 방향대로 이동 합니다.\n오직 점프만으로 정상까지 이동하세요!\n\n주의: 표범에게 잡히면 게임오버! \n\n※ 이 게임은 Nexile의 'Jump King'에서 영감을 받았습니다.",
+                )
+              }
+              className="pixel-ui w-full py-3 text-white text-lg font-semibold bg-[#939393]"
+            >
+              HOW TO PLAY
+            </button>
+          </div>
         </div>
 
         {/* 푸터 */}
