@@ -16,7 +16,7 @@ function GameContent() {
   const nickname = searchParams.get('nickname') || 'Player'
 
   return (
-    <main className="w-full h-screen overflow-hidden">
+    <main className="w-full h-dvh overflow-hidden">
       <GameCanvas nickname={nickname} />
     </main>
   )

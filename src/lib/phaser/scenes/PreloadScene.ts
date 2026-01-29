@@ -41,6 +41,9 @@ export default class PreloadScene extends Phaser.Scene {
     // UI 아이콘 로드 (모바일 컨트롤러용)
     this.load.image('ui_up', '/assets/ui/up_icon.png')
     this.load.image('ui_side', '/assets/ui/side_icon.png')
+
+    // 배경음 로드
+    this.load.audio('bgm', '/assets/sounds/bgm/QuietSpriteSavePoint.mp3')
   }
 
   create() {

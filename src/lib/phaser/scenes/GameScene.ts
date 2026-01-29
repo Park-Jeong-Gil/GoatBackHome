@@ -133,6 +133,9 @@ export default class GameScene extends Phaser.Scene {
     // 씬 종료 시 정리
     this.events.on("shutdown", this.cleanup, this);
 
+    // 배경음 재생 (무한 루프)
+    this.sound.play("bgm", { loop: true });
+
     // 초기화 완료
     this.isInitialized = true;
 

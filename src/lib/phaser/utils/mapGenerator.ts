@@ -169,7 +169,7 @@ export const mobileMapData: PlatformData[] = [
   // 0: 시작 지점
   { x: 480, y: 5505, texture: "platform", width: 960, shape: "flat" },
   // 1
-  { x: 350, y: 5350, texture: "platform", width: 140, shape: "flat" },
+  { x: 350, y: 5320, texture: "platform", width: 140, shape: "flat" },
   // 2
   { x: 720, y: 5220, texture: "platform", width: 150, shape: "flat" },
   // 3

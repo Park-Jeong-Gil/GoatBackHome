@@ -83,7 +83,7 @@ export const GAME_CONSTANTS = {
   PLAYER_FRICTION_ON_ICE: 0.0001, // 얼음 위에서의 플레이어 마찰력 (천천히 미끄러짐)
   PLAYER_BOUNCE: 0.2,
   MAX_JUMP_POWER: 25,
-  CHARGE_RATE: 50, // per second
+  CHARGE_RATE: 30, // per second
   HORIZONTAL_JUMP_RATIO: 0.25,
 
   // 발판 설정
