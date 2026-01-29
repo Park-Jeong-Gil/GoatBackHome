@@ -202,6 +202,13 @@ export class Player extends Phaser.Physics.Matter.Sprite {
       // velocity.y가 -0.5 ~ 0.5 사이면 이전 상태 유지
     }
 
+    // 추락 상태 진입 시 차징 사운드 정지
+    if (this._state === PlayerState.FALLING && prevState !== PlayerState.FALLING) {
+      this.stopChargingSound()
+      this.isCharging = false
+      this.jumpPower = 0
+    }
+
     // 상태 변경 시 텍스처 변경 및 이벤트 발생
     if (prevState !== this._state) {
       this.updateTexture()
