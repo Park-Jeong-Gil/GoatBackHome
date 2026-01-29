@@ -51,10 +51,10 @@ export default function Home() {
 
   return (
     <main className="min-h-screen bg-gradient-to-b from-sky-400 to-sky-600 flex flex-col items-center justify-center p-4">
-      <div className="bg-white/90 backdrop-blur rounded-2xl shadow-2xl p-8 w-full max-w-md text-center">
+      <div className="bg-white/90 backdrop-blur rounded-2xl shadow-2xl px-4 py-8 w-full max-w-md text-center">
         {/* 타이틀 */}
         <h1
-          className="text-4xl font-bold text-gray-800 mb-2"
+          className="title text-4xl font-bold mb-2"
           style={
             {
               // fontVariationSettings: `"wght" 900, "ital" 1`,
@@ -68,7 +68,7 @@ export default function Home() {
         >
           GOAT BACK HOME
         </h1>
-        <p className="text-gray-500 mb-6 text-lg">
+        <p className="text-gray-500 mb-6 text-md">
           I'm insanely desperate to go home.
         </p>
 
@@ -78,8 +78,9 @@ export default function Home() {
             src={GoatImage}
             alt="Goat Icon"
             width={100}
-            height={100}
+            // height={100}
             className="inline-block mr-2"
+            style={{ height: "auto" }}
           />
         </div>
 

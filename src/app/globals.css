@@ -37,17 +37,40 @@ main {
   background-image: url("../../public/assets/backgrounds/main-bg.png");
 }
 
+h1.title {
+  font-size: 40px;
+  /* color: transparent; */
+  color: #0a0a0a;
+  /* background: linear-gradient(
+    0deg,
+    rgba(34, 193, 195, 1) 0%,
+    rgba(253, 187, 45, 1) 100%
+  ); */
+  background-clip: text;
+  -webkit-background-clip: text;
+  /* text-shadow:
+    3px 3px 0px black,
+    -3px -3px 0px black,
+    -3px 3px 0px black,
+    3px -3px 0px black,
+    3px 0px 0px black; */
+  /* filter:
+    drop-shadow(3px 3px 0px black), drop-shadow(-3px -3px 0px black),
+    drop-shadow(-3px 3px 0px black), drop-shadow(3px -3px 0px black),
+    drop-shadow(3px 0px 0px black); */
+}
+
 input.pixel-ui {
   border: 0;
   box-shadow:
-    0px 5px #555,
-    0px -5px #555,
-    5px 0px #555,
-    -5px 0px #555,
-    0px 10px #0000001d,
-    5px 5px #0000001d,
-    -5px 5px #0000001d,
-    inset 0px 5px #bdbdbd60;
+    0px 4px #555,
+    0px -4px #555,
+    4px 0px #555,
+    -4px 0px #555,
+    0px 8px #0000001d,
+    4px 4px #0000001d,
+    -4px 4px #0000001d,
+    inset 0px 4px #bdbdbd60;
   margin-bottom: 16px;
   outline: none;
 }
@@ -55,26 +78,26 @@ button.pixel-ui {
   color: #fff;
   letter-spacing: 1px;
   /* background-color: #6abc3a; */
-  padding: 15px 40px 15px 40px;
+  padding: 12px 40px 12px 40px;
   /* font-size: 14px; */
   border: 0;
   box-shadow:
-    0px 5px black,
-    0px -5px black,
-    5px 0px black,
-    -5px 0px black,
-    0px 10px #00000038,
-    5px 5px #00000038,
-    -5px 5px #00000038,
-    inset 0px 5px #ffffff36;
+    0px 4px black,
+    0px -4px black,
+    4px 0px black,
+    -4px 0px black,
+    0px 8px #00000038,
+    4px 4px #00000038,
+    -4px 4px #00000038,
+    inset 0px 4px #ffffff36;
   cursor: pointer;
 }
 button.pixel-ui:active {
-  transform: translateY(5px);
+  transform: translateY(4px);
   box-shadow:
-    0px 5px black,
-    0px -5px black,
-    5px 0px black,
-    -5px 0px black,
-    inset 0px 5px #00000038;
+    0px 4px black,
+    0px -4px black,
+    4px 0px black,
+    -4px 0px black,
+    inset 0px 4px #00000038;
 }
