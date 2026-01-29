@@ -87,14 +87,14 @@ export default function Home() {
           <div className="space-y-3 flex flex-col gap-3">
             <button
               onClick={handlePlay}
-              className="pixel-ui w-full py-4 text-white text-xl font-bold bg-[#548ced]"
+              className="pixel-ui w-full py-4 text-white text-xl font-bold bg-[#548ced] transition-colors hover:bg-[#3a6fc1]"
             >
               PLAY GAME
             </button>
 
             <button
               onClick={() => router.push("/leaderboard")}
-              className="pixel-ui w-full py-3 text-white text-lg font-semibold bg-[#3bc6d8]"
+              className="pixel-ui w-full py-3 text-white text-lg font-semibold bg-[#3bc6d8] transition-colors hover:bg-[#33b0c7]"
             >
               RANKING BOARD
             </button>
@@ -105,7 +105,7 @@ export default function Home() {
                   "조작법\n⬅️➡️: 점프 방향\nSPACE or ⬆️: 점프 (길게 누르면 차징)\n방향키를 누른채 점프를 해야 방향대로 이동 합니다.\n오직 점프만으로 정상까지 이동하세요!\n\n주의: 표범에게 잡히면 게임오버! \n\n※ 이 게임은 Nexile의 'Jump King'에서 영감을 받았습니다.",
                 )
               }
-              className="pixel-ui w-full py-3 text-white text-lg font-semibold bg-[#939393]"
+              className="pixel-ui w-full py-3 text-white text-lg font-semibold bg-[#939393] transition-colors hover:bg-[#7a7a7a]"
             >
               HOW TO PLAY
             </button>

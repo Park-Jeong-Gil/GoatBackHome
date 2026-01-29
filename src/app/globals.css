@@ -72,10 +72,10 @@ button.pixel-ui {
   /* font-size: 14px; */
   border: 0;
   box-shadow:
-    0px 4px black,
-    0px -4px black,
-    4px 0px black,
-    -4px 0px black,
+    0px 4px #333,
+    0px -4px #333,
+    4px 0px #333,
+    -4px 0px #333,
     0px 8px #00000038,
     4px 4px #00000038,
     -4px 4px #00000038,
@@ -85,9 +85,9 @@ button.pixel-ui {
 button.pixel-ui:active {
   transform: translateY(4px);
   box-shadow:
-    0px 4px black,
-    0px -4px black,
-    4px 0px black,
-    -4px 0px black,
+    0px 4px #333,
+    0px -4px #333,
+    4px 0px #333,
+    -4px 0px #333,
     inset 0px 4px #00000038;
 }
