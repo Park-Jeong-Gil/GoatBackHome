@@ -423,7 +423,7 @@ export default class GameScene extends Phaser.Scene {
       .text(16, 16, "TIME: 00:00", {
         fontSize: "20px",
         color: "#ffffff",
-        fontFamily: "monospace",
+        fontFamily: "Mulmaru",
         stroke: "#000000",
         strokeThickness: 3,
       })
@@ -435,7 +435,7 @@ export default class GameScene extends Phaser.Scene {
       .text(16, 46, "HEIGHT: 0m", {
         fontSize: "20px",
         color: "#ffffff",
-        fontFamily: "monospace",
+        fontFamily: "Mulmaru",
         stroke: "#000000",
         strokeThickness: 3,
       })
