@@ -87,7 +87,7 @@ export default function Home() {
           <div className="space-y-3 flex flex-col gap-3">
             <button
               onClick={handlePlay}
-              className="pixel-ui w-full py-4 text-white text-xl font-bold bg-[#6997e6]"
+              className="pixel-ui w-full py-4 text-white text-xl font-bold bg-[#548ced]"
             >
               PLAY GAME
             </button>
