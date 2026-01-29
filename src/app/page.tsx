@@ -96,7 +96,7 @@ export default function Home() {
               onClick={() => router.push("/leaderboard")}
               className="pixel-ui w-full py-3 text-white text-lg font-semibold bg-[#3bc6d8]"
             >
-              LEADERBOARD
+              RANKING BOARD
             </button>
 
             <button
