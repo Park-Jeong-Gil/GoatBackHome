@@ -13,7 +13,7 @@ export async function POST(request: NextRequest) {
 
   try {
     const body = await request.json()
-    const { nickname, clear_time, max_height } = body
+    const { nickname, player_id, clear_time, max_height } = body
 
     // 유효성 검사
     if (!nickname || clear_time === undefined) {
@@ -23,18 +23,77 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // 저장
-    const { data, error } = await supabase
-      .from('scores')
-      .insert({
-        nickname: nickname.slice(0, 12),
-        clear_time,
-        max_height,
-      })
-      .select()
-      .single()
+    let data
 
-    if (error) throw error
+    if (player_id) {
+      // player_id가 있으면 기존 기록 확인
+      const { data: existing } = await supabase
+        .from('scores')
+        .select('*')
+        .eq('player_id', player_id)
+        .single()
+
+      if (existing) {
+        if (clear_time < existing.clear_time) {
+          // 새 기록이 더 빠르면 UPDATE
+          const { data: updated, error } = await supabase
+            .from('scores')
+            .update({
+              nickname: nickname.slice(0, 12),
+              clear_time,
+              max_height,
+            })
+            .eq('player_id', player_id)
+            .select()
+            .single()
+
+          if (error) throw error
+          data = updated
+        } else {
+          // 기존 기록이 더 빠르면 저장하지 않음
+          const { count } = await supabase
+            .from('scores')
+            .select('*', { count: 'exact', head: true })
+            .lt('clear_time', existing.clear_time)
+
+          return NextResponse.json({
+            success: true,
+            rank: (count || 0) + 1,
+            data: existing,
+            isNewRecord: false,
+          })
+        }
+      } else {
+        // 기존 기록 없음 → INSERT
+        const { data: inserted, error } = await supabase
+          .from('scores')
+          .insert({
+            nickname: nickname.slice(0, 12),
+            player_id,
+            clear_time,
+            max_height,
+          })
+          .select()
+          .single()
+
+        if (error) throw error
+        data = inserted
+      }
+    } else {
+      // player_id 없음 (이전 버전 호환) → 기존 방식으로 INSERT
+      const { data: inserted, error } = await supabase
+        .from('scores')
+        .insert({
+          nickname: nickname.slice(0, 12),
+          clear_time,
+          max_height,
+        })
+        .select()
+        .single()
+
+      if (error) throw error
+      data = inserted
+    }
 
     // 순위 계산
     const { count } = await supabase
@@ -46,6 +105,7 @@ export async function POST(request: NextRequest) {
       success: true,
       rank: (count || 0) + 1,
       data,
+      isNewRecord: true,
     })
   } catch (error) {
     console.error('Score save error:', error)
@@ -73,7 +133,7 @@ export async function GET(request: NextRequest) {
 
   const searchParams = request.nextUrl.searchParams
   const limit = parseInt(searchParams.get('limit') || '100')
-  const nickname = searchParams.get('nickname')
+  const playerId = searchParams.get('player_id')
 
   try {
     // 상위 N명 조회
@@ -85,15 +145,13 @@ export async function GET(request: NextRequest) {
 
     if (error) throw error
 
-    // 특정 닉네임 순위 조회
+    // 특정 플레이어 순위 조회
     let userRank = null
-    if (nickname) {
+    if (playerId) {
       const { data: userScore } = await supabase
         .from('scores')
         .select('*')
-        .eq('nickname', nickname)
-        .order('clear_time', { ascending: true })
-        .limit(1)
+        .eq('player_id', playerId)
         .single()
 
       if (userScore) {

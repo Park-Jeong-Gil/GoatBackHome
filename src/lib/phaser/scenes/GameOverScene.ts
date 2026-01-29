@@ -203,8 +203,9 @@ export default class GameOverScene extends Phaser.Scene {
 
   private async saveScore() {
     try {
-      // localStorage에서 닉네임 가져오기
+      // localStorage에서 닉네임과 플레이어 ID 가져오기
       const nickname = localStorage.getItem("goat_nickname") || "Anonymous";
+      const playerId = localStorage.getItem("goat_player_id");
 
       const response = await fetch("/api/scores", {
         method: "POST",
@@ -213,6 +214,7 @@ export default class GameOverScene extends Phaser.Scene {
         },
         body: JSON.stringify({
           nickname,
+          player_id: playerId,
           clear_time: this.gameResult.clearTime,
           max_height: this.gameResult.height,
         }),
@@ -235,6 +237,28 @@ export default class GameOverScene extends Phaser.Scene {
                 fontFamily: "Mulmaru",
                 stroke: "#000000",
                 strokeThickness: 3,
+              },
+            )
+            .setOrigin(0.5)
+            .setScrollFactor(0);
+
+          // 기록 갱신 여부 안내
+          const recordMessage = result.isNewRecord
+            ? "새로운 기록을 갱신 했습니다!"
+            : "이미 더 높은 기록이 있습니다.";
+          const messageColor = result.isNewRecord ? "#00FF88" : "#AAAAAA";
+
+          this.add
+            .text(
+              this.scale.width / 2,
+              this.scale.height * 0.61,
+              recordMessage,
+              {
+                fontSize: "18px",
+                color: messageColor,
+                fontFamily: "Mulmaru",
+                stroke: "#000000",
+                strokeThickness: 2,
               },
             )
             .setOrigin(0.5)

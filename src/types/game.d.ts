@@ -42,6 +42,7 @@ export interface GameState {
 export interface ScoreData {
   id: string
   nickname: string
+  player_id?: string
   clear_time: number
   max_height: number
   created_at: string

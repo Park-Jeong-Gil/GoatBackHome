@@ -18,6 +18,11 @@ export default function Home() {
       setNickname(savedNickname);
     }
 
+    // 브라우저 고유 ID 생성 (최초 1회)
+    if (!localStorage.getItem("goat_player_id")) {
+      localStorage.setItem("goat_player_id", crypto.randomUUID());
+    }
+
     console.log(
       `
 %c _____         _         _____                 _

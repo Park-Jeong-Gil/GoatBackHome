@@ -22,9 +22,9 @@ export default function LeaderboardPage() {
   useEffect(() => {
     const fetchLeaderboard = async () => {
       try {
-        const nickname = localStorage.getItem("goat_nickname");
-        const url = nickname
-          ? `/api/scores?limit=100&nickname=${encodeURIComponent(nickname)}`
+        const playerId = localStorage.getItem("goat_player_id");
+        const url = playerId
+          ? `/api/scores?limit=100&player_id=${encodeURIComponent(playerId)}`
           : "/api/scores?limit=100";
 
         const response = await fetch(url);
@@ -49,9 +49,9 @@ export default function LeaderboardPage() {
     return `${mins.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
   };
 
-  const myNickname =
+  const myPlayerId =
     typeof window !== "undefined"
-      ? localStorage.getItem("goat_nickname")
+      ? localStorage.getItem("goat_player_id")
       : null;
 
   return (
@@ -112,7 +112,7 @@ export default function LeaderboardPage() {
                   <div
                     key={score.id}
                     className={`flex items-center justify-between p-3 rounded-lg ${
-                      score.nickname === myNickname
+                      score.player_id === myPlayerId
                         ? "bg-yellow-50 border-2 border-yellow-300"
                         : "bg-gray-50"
                     }`}
