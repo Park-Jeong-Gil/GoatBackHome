@@ -294,6 +294,11 @@ export class Player extends Phaser.Physics.Matter.Sprite {
 
     // 공중에서 착지했을 때 LANDED 상태로 전환
     if (grounded && wasInAir) {
+      // 착지 시 차징 사운드 무조건 정지
+      this.stopChargingSound()
+      this.isCharging = false
+      this.jumpPower = 0
+
       this._state = PlayerState.LANDED
       this.landedTimer = this.LANDED_DURATION
       this.updateTexture()
