@@ -54,7 +54,7 @@ export default class GameOverScene extends Phaser.Scene {
 
     if (this.gameResult.success) {
       this.add
-        .text(width / 2, height * 0.4, `Clear Time: ${timeStr}`, {
+        .text(width / 2, height * 0.35, `Clear Time: ${timeStr}`, {
           fontSize: "24px",
           color: "#ffffff",
           fontFamily: "Mulmaru",
@@ -67,7 +67,7 @@ export default class GameOverScene extends Phaser.Scene {
     this.add
       .text(
         width / 2,
-        height * 0.48,
+        height * 0.4,
         `Best Height: ${this.gameResult.height}m`,
         {
           fontSize: "24px",
@@ -229,7 +229,7 @@ export default class GameOverScene extends Phaser.Scene {
           this.add
             .text(
               this.scale.width / 2,
-              this.scale.height * 0.55,
+              this.scale.height * 0.5,
               `RANK #${result.rank}`,
               {
                 fontSize: "32px",
@@ -251,7 +251,7 @@ export default class GameOverScene extends Phaser.Scene {
           this.add
             .text(
               this.scale.width / 2,
-              this.scale.height * 0.61,
+              this.scale.height * 0.55,
               recordMessage,
               {
                 fontSize: "18px",
