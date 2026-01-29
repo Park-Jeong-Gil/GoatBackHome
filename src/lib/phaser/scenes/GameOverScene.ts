@@ -104,26 +104,101 @@ export default class GameOverScene extends Phaser.Scene {
     text: string,
     onClick: () => void,
   ) {
-    const button = this.add
-      .text(x, y, text, {
+    const BORDER = 4;
+    const PAD_X = 20;
+    const PAD_Y = 12;
+    const BG_DEFAULT = 0x444444;
+    const BG_HOVER = 0x666666;
+    const BORDER_COLOR = 0x333333;
+
+    // 텍스트 크기 측정
+    const label = this.add
+      .text(0, 0, text, {
         fontSize: "24px",
         color: "#ffffff",
         fontFamily: "Mulmaru",
-        backgroundColor: "#444444",
-        padding: { x: 20, y: 10 },
       })
-      .setOrigin(0.5)
-      .setInteractive({ useHandCursor: true });
+      .setOrigin(0.5);
 
-    button.on("pointerover", () => {
-      button.setStyle({ backgroundColor: "#666666" });
+    const w = label.width + PAD_X * 2;
+    const h = label.height + PAD_Y * 2;
+    const halfW = w / 2;
+    const halfH = h / 2;
+
+    const gfx = this.add.graphics();
+
+    const draw = (bg: number, pressed: boolean) => {
+      gfx.clear();
+
+      // 외부 그림자 (누르지 않았을 때만)
+      if (!pressed) {
+        gfx.fillStyle(0x000000, 0.22);
+        gfx.fillRect(-halfW, -halfH + 8, w, h);
+        gfx.fillRect(-halfW + 4, -halfH + 4, w, h);
+        gfx.fillRect(-halfW - 4, -halfH + 4, w, h);
+      }
+
+      // 테두리 (#333) - 모서리 비워둔 픽셀 스타일
+      gfx.fillStyle(BORDER_COLOR, 1);
+      gfx.fillRect(-halfW, -halfH - BORDER, w, BORDER);
+      gfx.fillRect(-halfW, halfH, w, BORDER);
+      gfx.fillRect(-halfW - BORDER, -halfH, BORDER, h);
+      gfx.fillRect(halfW, -halfH, BORDER, h);
+
+      // 배경
+      gfx.fillStyle(bg, 1);
+      gfx.fillRect(-halfW, -halfH, w, h);
+
+      // 내부 효과
+      if (pressed) {
+        // 눌렸을 때: inset 그림자 (inset 0px 4px #00000038)
+        gfx.fillStyle(0x000000, 0.22);
+      } else {
+        // 기본: 하이라이트 (inset 0px 4px #ffffff36)
+        gfx.fillStyle(0xffffff, 0.21);
+      }
+      gfx.fillRect(-halfW, -halfH, w, BORDER);
+    };
+
+    draw(BG_DEFAULT, false);
+
+    const container = this.add.container(x, y, [gfx, label]);
+    container.setSize(w + BORDER * 2, h + BORDER * 2);
+    container.setInteractive({ useHandCursor: true });
+
+    let isHover = false;
+    let isPressed = false;
+
+    container.on("pointerover", () => {
+      isHover = true;
+      if (!isPressed) draw(BG_HOVER, false);
     });
 
-    button.on("pointerout", () => {
-      button.setStyle({ backgroundColor: "#444444" });
+    container.on("pointerout", () => {
+      isHover = false;
+      if (isPressed) {
+        isPressed = false;
+        container.setY(y);
+      }
+      draw(BG_DEFAULT, false);
     });
 
-    button.on("pointerdown", onClick);
+    container.on("pointerdown", () => {
+      isPressed = true;
+      container.setY(y + BORDER);
+      draw(isHover ? BG_HOVER : BG_DEFAULT, true);
+    });
+
+    container.on("pointerup", () => {
+      if (isPressed) {
+        isPressed = false;
+        container.setY(y);
+        draw(isHover ? BG_HOVER : BG_DEFAULT, false);
+        onClick();
+      }
+    });
+
+    return container;
   }
 
   private async saveScore() {
