@@ -651,6 +651,8 @@ export default class GameScene extends Phaser.Scene {
                 (b) => (b.body as MatterJS.BodyType) === otherBody,
               );
               if (bird) {
+                // 충돌 효과음
+                this.sound.play("sfx_bump", { volume: 0.7 });
                 // 넉백 적용 (새가 날아가는 방향으로 밀림)
                 const knockbackDir = bird.getKnockbackDirection();
                 this.player.applyKnockback(
@@ -669,6 +671,8 @@ export default class GameScene extends Phaser.Scene {
                 (l) => (l.body as MatterJS.BodyType) === otherBody,
               );
               if (leopard && leopard.isAlive()) {
+                // 충돌 효과음
+                this.sound.play("sfx_bump", { volume: 0.7 });
                 this.handleGameOver();
               }
               return;

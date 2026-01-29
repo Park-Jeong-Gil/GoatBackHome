@@ -44,6 +44,12 @@ export default class PreloadScene extends Phaser.Scene {
 
     // 배경음 로드
     this.load.audio('bgm', '/assets/sounds/bgm/QuietSpriteSavePoint.mp3')
+
+    // 효과음 로드
+    this.load.audio('sfx_bump', '/assets/sounds/effect/bump.mp3')
+    this.load.audio('sfx_jump', '/assets/sounds/effect/jump.mp3')
+    this.load.audio('sfx_landing', '/assets/sounds/effect/landing-on-the-ground-2.wav')
+    this.load.audio('sfx_powerup', '/assets/sounds/effect/powerup.wav')
   }
 
   create() {

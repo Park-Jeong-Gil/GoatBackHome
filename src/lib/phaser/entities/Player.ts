@@ -28,6 +28,9 @@ export class Player extends Phaser.Physics.Matter.Sprite {
   // 가상 컨트롤러 입력 (모바일용)
   private virtualDirection: number = 0 // -1: 왼쪽, 0: 없음, 1: 오른쪽
 
+  // 차징 효과음 참조
+  private chargingSound: Phaser.Sound.BaseSound | null = null
+
   private cursors!: Phaser.Types.Input.Keyboard.CursorKeys
   private spaceKey!: Phaser.Input.Keyboard.Key
 
@@ -77,11 +80,13 @@ export class Player extends Phaser.Physics.Matter.Sprite {
     this.spaceKey.on('down', () => {
       if (this.isGrounded) {
         this.isCharging = true
+        this.startChargingSound()
       }
     })
 
     this.spaceKey.on('up', () => {
       if (this.isCharging) {
+        this.stopChargingSound()
         this.jump()
         this.isCharging = false
         this.jumpPower = 0
@@ -109,15 +114,34 @@ export class Player extends Phaser.Physics.Matter.Sprite {
   startCharging() {
     if (this.isGrounded) {
       this.isCharging = true
+      this.startChargingSound()
     }
   }
 
   // 가상 컨트롤러: 점프 실행
   releaseJump() {
     if (this.isCharging) {
+      this.stopChargingSound()
       this.jump()
       this.isCharging = false
       this.jumpPower = 0
+    }
+  }
+
+  // 차징 효과음 시작 (루프)
+  private startChargingSound() {
+    if (!this.chargingSound) {
+      this.chargingSound = this.scene.sound.add('sfx_powerup', { loop: true, volume: 0.7 })
+    }
+    if (!this.chargingSound.isPlaying) {
+      this.chargingSound.play()
+    }
+  }
+
+  // 차징 효과음 정지
+  private stopChargingSound() {
+    if (this.chargingSound?.isPlaying) {
+      this.chargingSound.stop()
     }
   }
 
@@ -233,6 +257,9 @@ export class Player extends Phaser.Physics.Matter.Sprite {
     this._state = PlayerState.JUMPING
     this.updateTexture()
 
+    // 점프 효과음
+    this.scene.sound.play('sfx_jump', { volume: 0.7 })
+
     // 점프 실행 이벤트
     this.scene.events.emit('jumpExecuted')
   }
@@ -271,6 +298,9 @@ export class Player extends Phaser.Physics.Matter.Sprite {
       this.landedTimer = this.LANDED_DURATION
       this.updateTexture()
       this.scene.events.emit('playerStateChanged', PlayerState.LANDED, PlayerState.FALLING)
+
+      // 착지 효과음
+      this.scene.sound.play('sfx_landing', { volume: 0.7 })
     }
   }
 
