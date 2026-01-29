@@ -4,9 +4,11 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import GoatImage from "../../public/assets/sprites/goat_idle.png";
+import HowToPlayModal from "@/components/ui/HowToPlayModal";
 
 export default function Home() {
   const [nickname, setNickname] = useState("");
+  const [showHowToPlay, setShowHowToPlay] = useState(false);
   const router = useRouter();
 
   // localStorage에서 저장된 닉네임 불러오기
@@ -100,17 +102,15 @@ export default function Home() {
             </button>
 
             <button
-              onClick={() =>
-                alert(
-                  "조작법\n⬅️➡️: 점프 방향\nSPACE or ⬆️: 점프 (길게 누르면 차징)\n방향키를 누른채 점프를 해야 방향대로 이동 합니다.\n오직 점프만으로 정상까지 이동하세요!\n\n주의: 표범에게 잡히면 게임오버! \n\n※ 이 게임은 Nexile의 'Jump King'에서 영감을 받았습니다.",
-                )
-              }
+              onClick={() => setShowHowToPlay(true)}
               className="pixel-ui w-full py-3 text-white text-lg font-semibold bg-[#939393] transition-colors hover:bg-[#7a7a7a]"
             >
               HOW TO PLAY
             </button>
           </div>
         </div>
+
+        <HowToPlayModal isOpen={showHowToPlay} onClose={() => setShowHowToPlay(false)} />
 
         {/* 푸터 */}
         <p className="mt-8 text-sm text-gray-500">

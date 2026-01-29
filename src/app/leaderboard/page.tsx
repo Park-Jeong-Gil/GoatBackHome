@@ -62,7 +62,7 @@ export default function LeaderboardPage() {
           <h1 className="text-4xl font-bold text-gray-800">Ranking Board</h1>
           <button
             onClick={() => router.push("/")}
-            className="pixel-ui px-2 py-1 bg-gray-500 hover:bg-gray-600 text-white transition-colors"
+            className="pixel-ui bg-gray-500 hover:bg-gray-600 text-white transition-colors"
           >
             Back
           </button>

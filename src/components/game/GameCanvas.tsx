@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import Phaser from "phaser";
 import { phaserConfig } from "@/lib/phaser/config";
+import HowToPlayModal from "@/components/ui/HowToPlayModal";
 
 interface GameCanvasProps {
   nickname: string;
@@ -12,6 +13,7 @@ export default function GameCanvas({ nickname }: GameCanvasProps) {
   const gameRef = useRef<Phaser.Game | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [loadProgress, setLoadProgress] = useState(0);
+  const [showHowToPlay, setShowHowToPlay] = useState(false);
 
   // 닉네임 저장 (별도 effect)
   useEffect(() => {
@@ -70,6 +72,18 @@ export default function GameCanvas({ nickname }: GameCanvasProps) {
           </div>
         </div>
       )}
+      {/* How to Play 버튼 */}
+      {!isLoading && (
+        <button
+          onClick={() => setShowHowToPlay(true)}
+          className="absolute top-4 right-4 z-20 px-3 py-2 bg-black/50 hover:bg-black/70 text-white text-sm font-bold rounded-lg transition-colors"
+        >
+          ? HOW TO PLAY
+        </button>
+      )}
+
+      <HowToPlayModal isOpen={showHowToPlay} onClose={() => setShowHowToPlay(false)} />
+
       {/* 게임 컨테이너 */}
       <div id="game-container" className="w-full h-full" />
     </div>
