@@ -42,7 +42,7 @@
 // 의사 코드
 let jumpPower = 0
 const MAX_POWER = 100
-const CHARGE_RATE = 50 // per second
+const CHARGE_RATE = 65 // per second
 
 onKeyDown('space') {
   // 파워 증가 시작
