@@ -13,7 +13,7 @@ const GameCanvas = dynamic(() => import('@/components/game/GameCanvas'), {
 
 function GameContent() {
   const searchParams = useSearchParams()
-  const nickname = searchParams.get('nickname') || 'Player'
+  const nickname = searchParams.get('nickname') || `Player-${Math.floor(Math.random() * 10000)}`
 
   return (
     <main className="w-full h-dvh overflow-hidden">

@@ -41,7 +41,8 @@ export default function Home() {
       localStorage.setItem("goat_nickname", nickname.trim());
       router.push(`/game?nickname=${encodeURIComponent(nickname.trim())}`);
     } else {
-      router.push("/game?nickname=Player");
+      const randomId = Math.floor(Math.random() * 10000);
+      router.push(`/game?nickname=Player-${randomId}`);
     }
   };
 
