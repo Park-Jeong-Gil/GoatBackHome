@@ -70,7 +70,7 @@ export default function SoundSettingsModal({
         {/* SFX */}
         <div className="mb-6 text-left">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-sm font-bold text-gray-700">SFX</span>
+            <span className="text-sm font-bold text-gray-700">Effect</span>
             <button
               onClick={toggleSfxMute}
               className={`text-xs font-bold px-3 py-1 rounded transition-colors ${
