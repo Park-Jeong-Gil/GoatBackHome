@@ -465,36 +465,152 @@ export default class GameScene extends Phaser.Scene {
     this.heightText.setText(`HEIGHT: ${this.player.getHeight()}m`);
   }
 
+  /**
+   * 픽셀 아트 스타일 둥근 모서리 사각형을 그린다.
+   * fillStyle은 호출 전에 설정해야 한다.
+   */
+  private drawPixelRoundedRect(
+    gfx: Phaser.GameObjects.Graphics,
+    x: number,
+    y: number,
+    w: number,
+    h: number,
+    step: number,
+    cornerSteps: number,
+  ) {
+    let yPos = y;
+
+    // 상단 라운드
+    for (let i = cornerSteps; i > 0; i--) {
+      const inset = i * step;
+      const rowW = w - inset * 2;
+      if (rowW > 0) gfx.fillRect(x + inset, yPos, rowW, step);
+      yPos += step;
+    }
+
+    // 중간 직선
+    const middleH = h - cornerSteps * step * 2;
+    if (middleH > 0) {
+      gfx.fillRect(x, yPos, w, middleH);
+      yPos += middleH;
+    }
+
+    // 하단 라운드
+    for (let i = 1; i <= cornerSteps; i++) {
+      const inset = i * step;
+      const rowW = w - inset * 2;
+      if (rowW > 0) gfx.fillRect(x + inset, yPos, rowW, step);
+      yPos += step;
+    }
+  }
+
   private updatePowerGauge(power: number) {
-    // 게이지 표시
     this.powerGaugeBackground.setVisible(true);
     this.powerGauge.setVisible(true);
 
-    // 현재 화면 크기 가져오기 (RESIZE 모드에서 동적으로 변함)
     const screenWidth = this.scale.width;
     const screenHeight = this.scale.height;
 
-    // 배경 그리기 (화면 하단 중앙)
+    const STEP = 4;
+    const BORDER = 4;
+    const BAR_W = 200;
+    const BAR_H = 20;
+    const left = screenWidth / 2 - BAR_W / 2;
+    const top = screenHeight - 50;
+
+    const outerLeft = left - BORDER;
+    const outerTop = top - BORDER;
+    const outerW = BAR_W + BORDER * 2;
+    const outerH = BAR_H + BORDER * 2;
+
+    // === 배경 ===
     this.powerGaugeBackground.clear();
-    this.powerGaugeBackground.fillStyle(0x333333, 0.8);
-    this.powerGaugeBackground.fillRect(
-      screenWidth / 2 - 100,
-      screenHeight - 40,
-      200,
-      20,
+
+    // 외부 그림자
+    this.powerGaugeBackground.fillStyle(0x000000, 0.22);
+    this.drawPixelRoundedRect(
+      this.powerGaugeBackground,
+      outerLeft,
+      outerTop + 6,
+      outerW,
+      outerH,
+      STEP,
+      2,
     );
 
-    // 게이지 그리기
-    this.powerGauge.clear();
-    const gaugeWidth = 196 * power;
-    const color = power < 0.5 ? 0x00ff00 : power < 0.8 ? 0xffff00 : 0xff0000;
-    this.powerGauge.fillStyle(color, 1);
-    this.powerGauge.fillRect(
-      screenWidth / 2 - 98,
-      screenHeight - 38,
-      gaugeWidth,
-      16,
+    // 테두리 (외곽 둥근 사각형)
+    this.powerGaugeBackground.fillStyle(0x333333, 1);
+    this.drawPixelRoundedRect(
+      this.powerGaugeBackground,
+      outerLeft,
+      outerTop,
+      outerW,
+      outerH,
+      STEP,
+      2,
     );
+
+    // 내부 배경 (안쪽 둥근 사각형)
+    this.powerGaugeBackground.fillStyle(0x1a1a1a, 0.9);
+    this.drawPixelRoundedRect(
+      this.powerGaugeBackground,
+      left,
+      top,
+      BAR_W,
+      BAR_H,
+      STEP,
+      1,
+    );
+
+    // === 게이지 채우기 ===
+    this.powerGauge.clear();
+    if (power > 0) {
+      const gaugeWidth = BAR_W * power;
+      const color =
+        power < 0.5 ? 0x00ff00 : power < 0.8 ? 0xffff00 : 0xff0000;
+
+      // 게이지 본체
+      this.powerGauge.fillStyle(color, 1);
+      this.drawPixelRoundedRect(
+        this.powerGauge,
+        left,
+        top,
+        gaugeWidth,
+        BAR_H,
+        STEP,
+        1,
+      );
+
+      // 상단 하이라이트 (라운드 형태에 맞춤)
+      this.powerGauge.fillStyle(0xffffff, 0.2);
+      const hlInset = gaugeWidth > STEP * 2 ? STEP : 0;
+      this.powerGauge.fillRect(
+        left + hlInset,
+        top,
+        Math.max(0, gaugeWidth - hlInset * 2),
+        STEP,
+      );
+      if (gaugeWidth > STEP * 2) {
+        this.powerGauge.fillRect(left, top + STEP, gaugeWidth, STEP);
+      }
+
+      // 하단 그림자 (라운드 형태에 맞춤)
+      this.powerGauge.fillStyle(0x000000, 0.15);
+      if (gaugeWidth > STEP * 2) {
+        this.powerGauge.fillRect(
+          left,
+          top + BAR_H - STEP * 2,
+          gaugeWidth,
+          STEP,
+        );
+      }
+      this.powerGauge.fillRect(
+        left + hlInset,
+        top + BAR_H - STEP,
+        Math.max(0, gaugeWidth - hlInset * 2),
+        STEP,
+      );
+    }
   }
 
   private hidePowerGauge() {
