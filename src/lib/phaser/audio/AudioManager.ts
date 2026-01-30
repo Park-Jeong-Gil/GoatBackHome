@@ -11,7 +11,7 @@ const STORAGE_KEY = "goat_audio_settings";
 
 const DEFAULT_SETTINGS: AudioSettings = {
   bgmVolume: 0.5,
-  sfxVolume: 0.7,
+  sfxVolume: 0.5,
   bgmMuted: false,
   sfxMuted: false,
 };
@@ -59,10 +59,7 @@ export class AudioManager {
       const detail = (e as CustomEvent<Partial<AudioSettings>>).detail;
       this.applySettings(detail);
     };
-    window.addEventListener(
-      "audioSettingsChanged",
-      this.handleSettingsChanged,
-    );
+    window.addEventListener("audioSettingsChanged", this.handleSettingsChanged);
   }
 
   playSfx(key: string): void {

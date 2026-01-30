@@ -22,14 +22,12 @@ interface AudioStore extends AudioSettings {
 const STORAGE_KEY = "goat_audio_settings";
 
 function dispatchToPhaser(detail: Partial<AudioSettings>) {
-  window.dispatchEvent(
-    new CustomEvent("audioSettingsChanged", { detail }),
-  );
+  window.dispatchEvent(new CustomEvent("audioSettingsChanged", { detail }));
 }
 
 export const useAudioStore = create<AudioStore>((set, get) => ({
   bgmVolume: 0.5,
-  sfxVolume: 0.7,
+  sfxVolume: 0.5,
   bgmMuted: false,
   sfxMuted: false,
   isSettingsOpen: false,
