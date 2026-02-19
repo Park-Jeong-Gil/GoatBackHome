@@ -1,5 +1,9 @@
 # Goat Back Home
 
+[플레이하기: https://goat-back-home.vercel.app/](https://goat-back-home.vercel.app/)
+
+![Goat Back Home](docs/screenshots/goatBackHome.jpg)
+
 점프킹 스타일의 고난도 2D 플랫포머 게임입니다. 플레이어는 산양이 되어 산을 오르고, 추락해도 다시 올라가며 기록을 단축합니다.
 
 ## 1) 게임 개요
